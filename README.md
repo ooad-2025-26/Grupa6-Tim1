@@ -36,3 +36,10 @@ Cilj sistema je smanjenje gužvi, brža usluga i efikasnije planiranje hrane.
 - Ali Fišić
 - Faris Tarahija
 - Belma Đulić
+
+---
+Univerzitet u Sarajevu
+Elektrotehnički fakultet
+Objektno orijentisana analiza i dizajn 2025/2026
+
+
