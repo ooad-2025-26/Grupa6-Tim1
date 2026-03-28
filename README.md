@@ -38,9 +38,9 @@ Cilj sistema je smanjenje gužvi, brža usluga i efikasnije planiranje hrane.
 - Belma Đulić
 
 ---
-Univerzitet u Sarajevu
+**Univerzitet u Sarajevu**  
 
-Elektrotehnički fakultet
+Elektrotehnički fakultet  
 
 Objektno orijentisana analiza i dizajn 2025/2026
 
