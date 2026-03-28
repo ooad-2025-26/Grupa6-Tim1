@@ -1,4 +1,5 @@
-# CampusEats - Sistem za upravljanje studentskom menzom
+# <h1 align="center">🎓🍽️ CampusEats</h1>
+<p align="center">Sistem za upravljanje studentskom menzom</p>
 
 ## 📌 Opis projekta
 **CampusEats** je informacioni sistem koji omogućava digitalizaciju rada studentske menze i jednostavnije naručivanje obroka.
