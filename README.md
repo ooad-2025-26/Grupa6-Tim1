@@ -1,4 +1,4 @@
-# <h1 align="center">🎓🍽️ CampusEats</h1>
+# <h1 align="center">🎓 CampusEats 🍽️</h1>
 <p align="center">Sistem za upravljanje studentskom menzom</p>
 
 ## 📌 Opis projekta
