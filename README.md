@@ -28,6 +28,8 @@ Cilj sistema je smanjenje gužvi, brža usluga i efikasnije planiranje hrane.
 - **Administrator** – kontrola sistema
 - **Dostavljač** – preuzimanje i isporuka narudžbi
 
+  ---
+
 ## 👨‍💻 Članovi tima 
 - Ensar Bašić
 - Ali Fišić
