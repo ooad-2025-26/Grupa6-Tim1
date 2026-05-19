@@ -1,8 +1,119 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "CampusEats";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<link rel="stylesheet" href="/css/home.css" />
+
+<nav class="navbar">
+
+    <div class="logo">
+        CampusEats
+    </div>
+
+    <ul class="nav-links">
+        <li><a href="#">Home</a></li>
+        <li><a href="#">Menu</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Contact</a></li>
+    </ul>
+
+</nav>
+
+<section class="hero">
+
+    <div class="hero-left">
+
+        <h1>
+            Fast Food Delivery For Students
+        </h1>
+
+        <p>
+            Order delicious meals around your campus quickly and easily.
+        </p>
+
+        <div class="hero-buttons">
+
+            <button class="btn-order">
+                Order Now
+            </button>
+
+            <button class="btn-menu">
+                Explore Menu
+            </button>
+
+        </div>
+
+    </div>
+
+    <div class="hero-right">
+
+        <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836"
+             alt="Food Image">
+
+    </div>
+
+</section>
+
+<section class="popular-food">
+
+    <h2>Popularna jela</h2>
+
+    <div class="food-container">
+
+        <div class="food-card">
+
+            <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd">
+
+            <div class="food-info">
+
+                <h3>Cheese Burger</h3>
+
+                <p>⭐ 4.8 • 15 min</p>
+
+                <h4>8.99 KM</h4>
+
+                <button>Naruči</button>
+
+            </div>
+
+        </div>
+
+        <div class="food-card">
+
+            <img src="https://images.unsplash.com/photo-1513104890138-7c749659a591">
+
+            <div class="food-info">
+
+                <h3>Pizza Capricciosa</h3>
+
+                <p>⭐ 4.9 • 20 min</p>
+
+                <h4>12.50 KM</h4>
+
+                <button>Naruči</button>
+
+            </div>
+
+        </div>
+
+        <div class="food-card">
+
+            <img src="https://images.unsplash.com/photo-1559847844-d721426d6edc">
+
+            <div class="food-info">
+
+                <h3>Chicken Sandwich</h3>
+
+                <p>⭐ 4.7 • 10 min</p>
+
+                <h4>7.50 KM</h4>
+
+                <button>Naruči</button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
