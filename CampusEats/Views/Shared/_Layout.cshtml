@@ -1,10 +1,42 @@
-﻿<body>
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - CampusEats</title>
 
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+
+<body>
+
+    <nav class="ce-navbar">
+        <div class="ce-left">
+            <a class="ce-logo" asp-controller="Home" asp-action="Index">CampusEats</a>
+
+            <a asp-controller="Meni" asp-action="Index">Menu</a>
+            <a asp-controller="Home" asp-action="Privacy">About</a>
+            <a asp-controller="Home" asp-action="Privacy">Contact</a>
+        </div>
+
+        <div class="ce-right">
+            @if (User?.Identity?.IsAuthenticated == true)
+            {
+                <form asp-controller="Account" asp-action="Logout" method="post" class="ce-form">
+                    <button type="submit" class="ce-link-button">Logout</button>
+                </form>
+            }
+            else
+            {
+                <a asp-controller="Account" asp-action="Login">Log in</a>
+                <a asp-controller="Account" asp-action="Register">Register</a>
+            }
+        </div>
+    </nav>
+
+    <main role="main">
+        @RenderBody()
+    </main>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

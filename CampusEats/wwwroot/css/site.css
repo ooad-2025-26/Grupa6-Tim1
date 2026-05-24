@@ -29,3 +29,70 @@ body {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
 }
+
+.custom-navbar {
+    background-color: #28a745 !important;
+    border-radius: 14px;
+    margin: 8px 12px 20px 12px;
+    padding: 14px 30px;
+}
+
+    .custom-navbar .navbar-brand {
+        font-size: 28px;
+        color: white !important;
+    }
+
+    .custom-navbar .nav-link {
+        font-size: 18px;
+        margin-right: 22px;
+    }
+
+        .custom-navbar .nav-link:hover {
+            color: #e6ffe6 !important;
+        }
+    .custom-navbar .navbar-nav {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .custom-navbar .navbar-collapse {
+        justify-content: space-between;
+    }
+
+.ce-navbar {
+    background-color: #28a745;
+    border-radius: 14px;
+    margin: 8px 12px 20px 12px;
+    padding: 22px 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.ce-left,
+.ce-right {
+    display: flex;
+    align-items: center;
+    gap: 35px;
+}
+
+.ce-navbar a,
+.ce-link-button {
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.ce-logo {
+    font-size: 30px !important;
+    font-weight: bold;
+}
+
+.ce-navbar a:hover,
+.ce-link-button:hover {
+    color: #e6ffe6;
+}
