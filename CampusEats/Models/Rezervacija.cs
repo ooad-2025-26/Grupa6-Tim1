@@ -7,7 +7,7 @@
         public StatusRezervacije Status { get; set; }
 
         public int KorisnikId { get; set; }
-        public Korisnik Korisnik { get; set; }
+        public ApplicationUser Korisnik { get; set; }
 
         public int ObrokId { get; set; }
         public Obrok Obrok { get; set; }

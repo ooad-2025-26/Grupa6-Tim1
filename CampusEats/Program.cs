@@ -15,6 +15,20 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
 
 var app = builder.Build();
 
+using (var scope= app.Services.CreateScope())
+{
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    string[] roles = { "Student", "Radnik", "Dostavljac", "Admin" };
+
+    foreach(var r in roles)
+    {
+        if(!await roleManager.RoleExistsAsync(r))
+        {
+            await roleManager.CreateAsync(new IdentityRole(r));
+        }
+    }
+}
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {

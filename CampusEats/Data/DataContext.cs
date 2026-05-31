@@ -10,7 +10,7 @@ namespace CampusEats.Data
         {
         }
 
-        public DbSet<Korisnik> Korisnici { get; set; }
+        public DbSet<ApplicationUser> Korisnici { get; set; }
         public DbSet<Obrok> Obroci { get; set; }
         public DbSet<Rezervacija> Rezervacije { get; set; }
         public DbSet<Meni> Meniji { get; set; }

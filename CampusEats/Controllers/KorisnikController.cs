@@ -26,7 +26,7 @@ namespace CampusEats.Controllers
         }
 
         // GET: Korisnik/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(string? id)
         {
             if (id == null)
             {
@@ -54,7 +54,7 @@ namespace CampusEats.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Ime,Prezime,Email,Lozinka,BrojIndeksa,Telefon,Adresa,Uloga")] Korisnik korisnik)
+        public async Task<IActionResult> Create([Bind("Id,Ime,Prezime,Email,Lozinka,BrojIndeksa,Telefon,Adresa,Uloga")] ApplicationUser korisnik)
         {
             if (ModelState.IsValid)
             {
@@ -86,7 +86,7 @@ namespace CampusEats.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Ime,Prezime,Email,Lozinka,BrojIndeksa,Telefon,Adresa,Uloga")] Korisnik korisnik)
+        public async Task<IActionResult> Edit(string id, [Bind("Id,Ime,Prezime,Email,Lozinka,BrojIndeksa,Telefon,Adresa,Uloga")] ApplicationUser korisnik)
         {
             if (id != korisnik.Id)
             {
@@ -117,7 +117,7 @@ namespace CampusEats.Controllers
         }
 
         // GET: Korisnik/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(string? id)
         {
             if (id == null)
             {
@@ -149,7 +149,7 @@ namespace CampusEats.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool KorisnikExists(int id)
+        private bool KorisnikExists(string id)
         {
             return _context.Korisnici.Any(e => e.Id == id);
         }
