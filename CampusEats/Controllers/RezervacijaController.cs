@@ -10,6 +10,7 @@ using CampusEats.Models;
 
 namespace CampusEats.Controllers
 {
+    [Microsoft.AspNetCore.Authorization.Authorize]
     public class RezervacijaController : Controller
     {
         private readonly DataContext _context;
@@ -49,7 +50,7 @@ namespace CampusEats.Controllers
         // GET: Rezervacija/Create
         public IActionResult Create()
         {
-            ViewData["KorisnikId"] = new SelectList(_context.Korisnici, "Id", "Id");
+            ViewData["KorisnikId"] = new SelectList(Enumerable.Empty<object>(), "Id", "Id");
             ViewData["ObrokId"] = new SelectList(_context.Obroci, "Id", "Id");
             return View();
         }
@@ -67,7 +68,7 @@ namespace CampusEats.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["KorisnikId"] = new SelectList(_context.Korisnici, "Id", "Id", rezervacija.KorisnikId);
+            ViewData["KorisnikId"] = new SelectList(Enumerable.Empty<object>(), "Id", "Id");
             ViewData["ObrokId"] = new SelectList(_context.Obroci, "Id", "Id", rezervacija.ObrokId);
             return View(rezervacija);
         }
@@ -85,7 +86,7 @@ namespace CampusEats.Controllers
             {
                 return NotFound();
             }
-            ViewData["KorisnikId"] = new SelectList(_context.Korisnici, "Id", "Id", rezervacija.KorisnikId);
+            ViewData["KorisnikId"] = new SelectList(Enumerable.Empty<object>(), "Id", "Id");
             ViewData["ObrokId"] = new SelectList(_context.Obroci, "Id", "Id", rezervacija.ObrokId);
             return View(rezervacija);
         }
@@ -122,7 +123,7 @@ namespace CampusEats.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["KorisnikId"] = new SelectList(_context.Korisnici, "Id", "Id", rezervacija.KorisnikId);
+            ViewData["KorisnikId"] = new SelectList(Enumerable.Empty<object>(), "Id", "Id");
             ViewData["ObrokId"] = new SelectList(_context.Obroci, "Id", "Id", rezervacija.ObrokId);
             return View(rezervacija);
         }

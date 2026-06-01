@@ -10,6 +10,7 @@ using CampusEats.Models;
 
 namespace CampusEats.Controllers
 {
+    [Microsoft.AspNetCore.Authorization.Authorize]
     public class ObrokController : Controller
     {
         private readonly DataContext _context;

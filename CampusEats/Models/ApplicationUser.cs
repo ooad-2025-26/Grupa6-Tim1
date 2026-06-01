@@ -4,13 +4,16 @@ namespace CampusEats.Models
 {
     public class ApplicationUser : IdentityUser
     {
+        [System.ComponentModel.DataAnnotations.Required]
         public string Ime { get; set; }
 
+        [System.ComponentModel.DataAnnotations.Required]
         public string Prezime { get; set; }
-        public string Email { get; set; }
-        public string Lozinka { get; set; }
+
+        [System.ComponentModel.DataAnnotations.Required]
         public string BrojIndeksa { get; set; }
-        public string Telefon { get; set; }
+
+        [System.ComponentModel.DataAnnotations.Required]
         public string Adresa { get; set; }
     }
 }
