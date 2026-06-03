@@ -12,9 +12,9 @@ namespace CampusEats.Controllers
         private readonly RoleManager<IdentityRole> _roleManager;
 
         public AccountController(
-    UserManager<ApplicationUser> userManager,
-    SignInManager<ApplicationUser> signInManager,
-    RoleManager<IdentityRole> roleManager)
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager,
+            RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -32,14 +32,12 @@ namespace CampusEats.Controllers
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
             if (!ModelState.IsValid)
-            {
                 return View(model);
-            }
 
             var user = new ApplicationUser
             {
-                UserName = model.Email,
-                Email = model.Email,
+                UserName = model.Email?.Trim(),
+                Email = model.Email?.Trim(),
                 Ime = model.Ime ?? string.Empty,
                 Prezime = model.Prezime ?? string.Empty,
                 BrojIndeksa = model.BrojIndeksa ?? string.Empty,
@@ -48,18 +46,18 @@ namespace CampusEats.Controllers
             };
 
             var result = await _userManager.CreateAsync(user, model.Password);
+
             if (!result.Succeeded)
             {
                 foreach (var e in result.Errors)
-                {
                     ModelState.AddModelError(string.Empty, e.Description);
-                }
+
                 return View(model);
             }
 
-            // assign default role
             if (!await _roleManager.RoleExistsAsync("Student"))
                 await _roleManager.CreateAsync(new IdentityRole("Student"));
+
             await _userManager.AddToRoleAsync(user, "Student");
 
             await _signInManager.SignInAsync(user, isPersistent: false);
@@ -71,32 +69,36 @@ namespace CampusEats.Controllers
         {
             return View(new LoginViewModel { ReturnUrl = returnUrl });
         }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
-            if (!ModelState.IsValid) return View(model);
-
-            var user = await _userManager.FindByEmailAsync(model.Email);
-            if (user == null)
+            if (!ModelState.IsValid)
             {
-                ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                ModelState.AddModelError(string.Empty, "ModelState is invalid.");
                 return View(model);
             }
 
-            var result = await _signInManager.PasswordSignInAsync(user.UserName, model.Password, model.RememberMe, lockoutOnFailure: false);
-            if (result.Succeeded)
+            var email = model.Email?.Trim();
+
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
             {
-                if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
-                    return Redirect(model.ReturnUrl!);
-                return RedirectToAction("Index", "Home");
+                ModelState.AddModelError(string.Empty, "User not found: " + email);
+                return View(model);
             }
 
-            ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-            return View(model);
-        }
+            var passwordOk = await _userManager.CheckPasswordAsync(user, model.Password);
+            if (!passwordOk)
+            {
+                ModelState.AddModelError(string.Empty, "Password is incorrect for: " + email);
+                return View(model);
+            }
 
+            await _signInManager.SignInAsync(user, isPersistent: model.RememberMe);
+
+            return RedirectToAction("Index", "Home");
+        }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
