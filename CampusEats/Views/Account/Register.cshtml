@@ -1,40 +1,77 @@
 @model CampusEats.Models.RegisterViewModel
 
 @{
-    ViewData["Title"] = "Register";
+    ViewData["Title"] = "User Registration";
 }
 
-<h2>Register</h2>
+@section Styles {
+    <link rel="stylesheet" href="~/css/auth.css" asp-append-version="true" />
+}
 
-<form asp-action="Register" method="post">
-    <div asp-validation-summary="ModelOnly"></div>
-    <div>
-        <label asp-for="Ime"></label>
-        <input asp-for="Ime" />
+<h1 class="auth-page-title">User Registration</h1>
+
+<div class="auth-container">
+    <div class="auth-card">
+        <h2 class="auth-card-title">Register</h2>
+
+        <form asp-action="Register" method="post">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-2"></div>
+
+            <div class="form-group">
+                <label class="auth-label">First Name</label>
+                <input asp-for="Ime" class="form-control auth-input" placeholder="Enter first name" />
+                <span asp-validation-for="Ime" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label class="auth-label">Last Name</label>
+                <input asp-for="Prezime" class="form-control auth-input" placeholder="Enter last name" />
+                <span asp-validation-for="Prezime" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label class="auth-label">Email</label>
+                <input asp-for="Email" class="form-control auth-input" placeholder="Enter email" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label class="auth-label">Password</label>
+                <input asp-for="Password" type="password" class="form-control auth-input" placeholder="Enter password" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label class="auth-label">Student Index Number</label>
+                <input asp-for="BrojIndeksa" class="form-control auth-input" placeholder="Enter index number" />
+                <span asp-validation-for="BrojIndeksa" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label class="auth-label">Address</label>
+                <input asp-for="Adresa" class="form-control auth-input" placeholder="Enter address" />
+                <span asp-validation-for="Adresa" class="text-danger"></span>
+            </div>
+
+            <div class="form-group text-center">
+                <button type="submit" class="btn auth-submit">Register</button>
+            </div>
+
+            <div class="auth-bottom-text text-center">
+                <span>Already have an account? <a asp-controller="Account" asp-action="Login">Log In</a></span>
+            </div>
+        </form>
     </div>
-    <div>
-        <label asp-for="Prezime"></label>
-        <input asp-for="Prezime" />
+
+    <div class="auth-logo">
+        <div class="logo-visual">
+            <div class="logo-icon">🍴</div>
+            <div class="logo-text">CampusEats</div>
+        </div>
     </div>
-    <div>
-        <label asp-for="BrojIndeksa"></label>
-        <input asp-for="BrojIndeksa" />
-    </div>
-    <div>
-        <label asp-for="Adresa"></label>
-        <input asp-for="Adresa" />
-    </div>
-    <div>
-        <label asp-for="Email"></label>
-        <input asp-for="Email" />
-    </div>
-    <div>
-        <label asp-for="Password"></label>
-        <input asp-for="Password" type="password" />
-    </div>
-    <div>
-        <label asp-for="ConfirmPassword"></label>
-        <input asp-for="ConfirmPassword" type="password" />
-    </div>
-    <button type="submit">Register</button>
-</form>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

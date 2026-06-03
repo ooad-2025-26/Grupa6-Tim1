@@ -41,7 +41,7 @@ body {
     gap: 20px;
 }
 
-.nav-center {
+.ce-nav-links {
     display: flex;
     gap: 24px;
     align-items: center;
@@ -78,7 +78,7 @@ body {
 }
 
 /* prevent wrapping of main nav on desktop */
-.ce-navbar .nav-center {
+.ce-navbar .ce-nav-links {
     white-space: nowrap;
 }
 

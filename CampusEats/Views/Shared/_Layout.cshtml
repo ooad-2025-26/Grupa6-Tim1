@@ -1,11 +1,21 @@
-﻿<body>
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] - CampusEats</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    @RenderSection("Styles", required: false)
+</head>
+<body>
 
     <nav class="ce-navbar">
         <div class="ce-left">
             <a class="ce-logo" asp-controller="Home" asp-action="Index">CampusEats</a>
         </div>
 
-        <div class="nav-center">
+        <div class="ce-nav-links">
             <a asp-controller="Home" asp-action="Index" asp-fragment="how">How it works</a>
             <a asp-controller="Home" asp-action="Index" asp-fragment="popular-food">Menu</a>
             <a asp-controller="Home" asp-action="Index" asp-fragment="benefits">Benefits</a>
@@ -26,7 +36,7 @@
                 <span class="text-white">Hello @User.Identity.Name</span>
                 <form class="ce-form" asp-controller="Account" asp-action="Logout" method="post" id="logoutForm">
                     @Html.AntiForgeryToken()
-                    <button type="submit" class="ce-link-button">Log out</button>
+                    <button type="submit" class="ce-link-button">Logout</button>
                 </form>
             }
             else
