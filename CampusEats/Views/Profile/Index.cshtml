@@ -1,0 +1,48 @@
+@model CampusEats.Models.ProfileViewModel
+
+@{
+    ViewData["Title"] = "Profile";
+}
+
+<h1>Profile</h1>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <h3>User Details</h3>
+            <dl>
+                <dt>First name</dt>
+                <dd>@Model.Ime</dd>
+                <dt>Last name</dt>
+                <dd>@Model.Prezime</dd>
+                <dt>Email</dt>
+                <dd>@Model.Email</dd>
+                <dt>Student index</dt>
+                <dd>@Model.BrojIndeksa</dd>
+                <dt>Address</dt>
+                <dd>@Model.Adresa</dd>
+                <dt>Roles</dt>
+                <dd>@string.Join(", ", Model.Roles)</dd>
+            </dl>
+        </div>
+        <div class="col-md-6">
+            <h3>Shortcuts</h3>
+            @if (User.IsInRole("Student"))
+            {
+                <a class="btn btn-success mb-2" asp-controller="Obrok" asp-action="Index">Browse Menu</a>
+                <a class="btn btn-primary mb-2" asp-controller="Rezervacija" asp-action="Index">My Reservations</a>
+                <a class="btn btn-info mb-2" asp-controller="QRKod" asp-action="Index">My QR Codes</a>
+            }
+            @if (User.IsInRole("Radnik") || User.IsInRole("Admin"))
+            {
+                <a class="btn btn-warning mb-2" asp-controller="Obrok" asp-action="Index">Manage Meals</a>
+                <a class="btn btn-secondary mb-2" asp-controller="Meni" asp-action="Index">Manage Menus</a>
+                <a class="btn btn-dark mb-2" asp-controller="Rezervacija" asp-action="Index">View Reservations</a>
+            }
+            @if (User.IsInRole("Dostavljac") || User.IsInRole("Admin"))
+            {
+                <a class="btn btn-outline-primary mb-2" asp-controller="Dostava" asp-action="Index">Assigned Deliveries</a>
+            }
+        </div>
+    </div>
+</div>

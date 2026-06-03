@@ -31,6 +31,50 @@ using (var scope= app.Services.CreateScope())
     }
 }
 
+// Seed demo users for each role if they do not exist
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+
+    async Task EnsureUser(string email, string password, string role, string first = "Demo", string last = "User")
+    {
+        var user = await userManager.FindByEmailAsync(email);
+        if (user == null)
+        {
+            user = new ApplicationUser
+            {
+                UserName = email,
+                Email = email,
+                EmailConfirmed = true,
+                Ime = first,
+                Prezime = last,
+                BrojIndeksa = role == "Student" ? "2025/000" : string.Empty,
+                Adresa = string.Empty
+            };
+            var create = await userManager.CreateAsync(user, password);
+            if (create.Succeeded)
+            {
+                if (!await roleManager.RoleExistsAsync(role))
+                    await roleManager.CreateAsync(new IdentityRole(role));
+                await userManager.AddToRoleAsync(user, role);
+            }
+        }
+        else
+        {
+            // ensure role assigned
+            if (!await userManager.IsInRoleAsync(user, role))
+                await userManager.AddToRoleAsync(user, role);
+        }
+    }
+
+    await EnsureUser("student@campuseats.com", "Student123!", "Student", "Student", "User");
+    await EnsureUser("radnik@campuseats.com", "Radnik123!", "Radnik", "Worker", "User");
+    await EnsureUser("dostavljac@campuseats.com", "Dostavljac123!", "Dostavljac", "Delivery", "User");
+    await EnsureUser("admin@campuseats.com", "Admin123!", "Admin", "Admin", "User");
+}
+
 // Runtime data migration: safely migrate Korisnici -> AspNetUsers using UserManager and parameterized SQL.
 using (var scope = app.Services.CreateScope())
 {

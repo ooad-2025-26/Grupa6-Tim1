@@ -103,6 +103,28 @@ body {
     gap: 60px;
 }
 
+/* Dashboard cards for logged in users */
+.dashboard {
+    padding: 40px 24px;
+}
+.dashboard-cards {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+.dashboard-cards .card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 24px;
+    min-width: 160px;
+    text-align: center;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    color: #111;
+    text-decoration: none;
+    display: inline-block;
+}
+
 .hero-left {
     flex: 1;
 }

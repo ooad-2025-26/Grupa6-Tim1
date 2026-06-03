@@ -4,43 +4,86 @@
 
 <link rel="stylesheet" href="/css/home.css" />
 
-<section class="hero" id="hero">
+@if (!(User?.Identity?.IsAuthenticated ?? false))
+{
+    <section class="hero" id="hero">
 
-    <div class="hero-left">
+        <div class="hero-left">
 
-        <h1>
-            Reserve your meal quickly and without waiting
-        </h1>
+            <h1>
+                Reserve your meal quickly and without waiting
+            </h1>
 
-        <p>
-            Browse the daily menu, choose your meal, and pick it up easily using a QR code.
-        </p>
+            <p>
+                Browse the daily menu, choose your meal, and pick it up easily using a QR code.
+            </p>
 
-        <div class="hero-buttons">
+            <div class="hero-buttons">
 
-            @if (User?.Identity?.IsAuthenticated ?? false)
-            {
-                <a class="btn-order" asp-controller="Rezervacija" asp-action="Create">Order Now</a>
-            }
-            else
-            {
-                <a class="btn-order" asp-area="Identity" asp-page="/Account/Login" asp-route-returnUrl="~/Rezervacija/Create">Order Now</a>
-            }
+                @if (User?.Identity?.IsAuthenticated ?? false)
+                {
+                    <a class="btn-order" asp-controller="Rezervacija" asp-action="Create">Order Now</a>
+                }
+                else
+                {
+                    <a class="btn-order" asp-area="Identity" asp-page="/Account/Login" asp-route-returnUrl="~/Rezervacija/Create">Order Now</a>
+                }
 
-            <a class="btn-menu" asp-controller="Home" asp-action="Index" asp-fragment="popular-food">Explore Menu</a>
+                <a class="btn-menu" asp-controller="Home" asp-action="Index" asp-fragment="popular-food">Explore Menu</a>
+
+            </div>
 
         </div>
 
-    </div>
+        <div class="hero-right">
 
-    <div class="hero-right">
+            <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836"
+                 alt="Food Image">
 
-        <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836"
-             alt="Food Image">
+        </div>
 
-    </div>
-
-</section>
+    </section>
+}
+else
+{
+    <section class="dashboard">
+        <div class="container">
+            <h2>Welcome back, @User.Identity.Name</h2>
+            <div class="dashboard-cards">
+                @if (User.IsInRole("Student"))
+                {
+                    <a class="card" asp-controller="Obrok" asp-action="Index">Browse Menu</a>
+                    <a class="card" asp-controller="Rezervacija" asp-action="Index">My Reservations</a>
+                    <a class="card" asp-controller="QRKod" asp-action="Index">My QR Codes</a>
+                    <a class="card" asp-controller="Profile" asp-action="Index">Profile</a>
+                }
+                else if (User.IsInRole("Radnik"))
+                {
+                    <a class="card" asp-controller="Obrok" asp-action="Index">Manage Meals</a>
+                    <a class="card" asp-controller="Meni" asp-action="Index">Manage Menus</a>
+                    <a class="card" asp-controller="Rezervacija" asp-action="Index">View Reservations</a>
+                    <a class="card" asp-controller="Zaliha" asp-action="Index">Manage Stock</a>
+                }
+                else if (User.IsInRole("Dostavljac"))
+                {
+                    <a class="card" asp-controller="Dostava" asp-action="Index">Assigned Deliveries</a>
+                    <a class="card" asp-controller="Dostava" asp-action="Index">Update Delivery Status</a>
+                    <a class="card" asp-controller="Profile" asp-action="Index">Profile</a>
+                }
+                else if (User.IsInRole("Admin"))
+                {
+                    <a class="card" asp-controller="Account" asp-action="Index">User Management</a>
+                    <a class="card" asp-controller="Home" asp-action="Index">Role Management</a>
+                    <a class="card" asp-controller="Obrok" asp-action="Index">Meals</a>
+                    <a class="card" asp-controller="Meni" asp-action="Index">Menus</a>
+                    <a class="card" asp-controller="Rezervacija" asp-action="Index">Reservations</a>
+                    <a class="card" asp-controller="Dostava" asp-action="Index">Deliveries</a>
+                    <a class="card" asp-controller="Zaliha" asp-action="Index">Stock</a>
+                }
+            </div>
+        </div>
+    </section>
+}
 
 <section class="how-section meals" id="how">
     <h2 class="section-title">How CampusEats Works</h2>
