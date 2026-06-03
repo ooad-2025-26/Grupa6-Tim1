@@ -1,13 +1,17 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\Ensar\\source\\repos\\ooad-2025-26\\Grupa6-Tim1\\",
+  "WorkspaceRootPath": "C:\\Users\\DT User\\source\\repos\\ooad-2025-26\\Grupa6-Tim1\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Ensar\\source\\repos\\ooad-2025-26\\Grupa6-Tim1\\CampusEats\\Models\\Korisnik.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\DT User\\source\\repos\\ooad-2025-26\\Grupa6-Tim1\\CampusEats\\Program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:CampusEats\\Program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\DT User\\source\\repos\\ooad-2025-26\\Grupa6-Tim1\\CampusEats\\Models\\Korisnik.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:CampusEats\\Models\\Korisnik.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Ensar\\source\\repos\\ooad-2025-26\\Grupa6-Tim1\\CampusEats\\CampusEats.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\DT User\\source\\repos\\ooad-2025-26\\Grupa6-Tim1\\CampusEats\\CampusEats.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:CampusEats\\CampusEats.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
     }
   ],
@@ -18,15 +22,28 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\DT User\\source\\repos\\ooad-2025-26\\Grupa6-Tim1\\CampusEats\\Program.cs",
+              "RelativeDocumentMoniker": "CampusEats\\Program.cs",
+              "ToolTip": "C:\\Users\\DT User\\source\\repos\\ooad-2025-26\\Grupa6-Tim1\\CampusEats\\Program.cs",
+              "RelativeToolTip": "CampusEats\\Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-01T16:47:35.383Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "CampusEats.csproj",
-              "DocumentMoniker": "C:\\Users\\Ensar\\source\\repos\\ooad-2025-26\\Grupa6-Tim1\\CampusEats\\CampusEats.csproj",
+              "DocumentMoniker": "C:\\Users\\DT User\\source\\repos\\ooad-2025-26\\Grupa6-Tim1\\CampusEats\\CampusEats.csproj",
               "RelativeDocumentMoniker": "CampusEats\\CampusEats.csproj",
-              "ToolTip": "C:\\Users\\Ensar\\source\\repos\\ooad-2025-26\\Grupa6-Tim1\\CampusEats\\CampusEats.csproj",
+              "ToolTip": "C:\\Users\\DT User\\source\\repos\\ooad-2025-26\\Grupa6-Tim1\\CampusEats\\CampusEats.csproj",
               "RelativeToolTip": "CampusEats\\CampusEats.csproj",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
@@ -35,13 +52,13 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "Korisnik.cs",
-              "DocumentMoniker": "C:\\Users\\Ensar\\source\\repos\\ooad-2025-26\\Grupa6-Tim1\\CampusEats\\Models\\Korisnik.cs",
+              "DocumentMoniker": "C:\\Users\\DT User\\source\\repos\\ooad-2025-26\\Grupa6-Tim1\\CampusEats\\Models\\Korisnik.cs",
               "RelativeDocumentMoniker": "CampusEats\\Models\\Korisnik.cs",
-              "ToolTip": "C:\\Users\\Ensar\\source\\repos\\ooad-2025-26\\Grupa6-Tim1\\CampusEats\\Models\\Korisnik.cs*",
-              "RelativeToolTip": "CampusEats\\Models\\Korisnik.cs*",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAABAAAAAAAAAA==",
+              "ToolTip": "C:\\Users\\DT User\\source\\repos\\ooad-2025-26\\Grupa6-Tim1\\CampusEats\\Models\\Korisnik.cs",
+              "RelativeToolTip": "CampusEats\\Models\\Korisnik.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAqAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-05-04T17:59:41.003Z",
               "EditorCaption": ""

@@ -22,37 +22,64 @@ body {
 /* NAVBAR */
 
 .ce-navbar {
-    background-color: #28a745;
-    border-radius: 14px;
+    background-color: #45ad4d !important; /* slightly brighter green */
+    border-radius: 6px;
     margin: 10px 14px 20px 14px;
-    padding: 22px 50px;
+    padding: 12px 30px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    width: calc(100% - 28px);
+    box-sizing: border-box;
+    flex-wrap: nowrap;
 }
 
 .ce-left,
 .ce-right {
     display: flex;
     align-items: center;
-    gap: 35px;
+    gap: 20px;
+}
+
+.nav-center {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+    margin-left: 20px;
 }
 
 .ce-navbar a,
+.ce-navbar a:visited,
 .ce-link-button {
-    color: white;
-    text-decoration: none;
-    font-size: 18px;
+    color: white !important;
+    text-decoration: none !important;
+    font-size: 16px;
     background: none;
     border: none;
     cursor: pointer;
     font-family: Arial, sans-serif;
-    transition: 0.2s;
+    transition: 0.15s;
 }
 
 .ce-logo {
-    font-size: 30px !important;
-    font-weight: bold;
+    font-size: 18px !important;
+    font-weight: 700;
+    color: white !important;
+}
+
+.ce-navbar a:hover,
+.ce-link-button:hover {
+    color: #e9ffef !important;
+}
+
+/* ensure auth links on right stay aligned */
+.ce-right {
+    margin-left: auto;
+}
+
+/* prevent wrapping of main nav on desktop */
+.ce-navbar .nav-center {
+    white-space: nowrap;
 }
 
 .ce-form {

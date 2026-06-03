@@ -4,29 +4,30 @@
 
 <link rel="stylesheet" href="/css/home.css" />
 
-
-
-<section class="hero">
+<section class="hero" id="hero">
 
     <div class="hero-left">
 
         <h1>
-            Fast Food Delivery For Students
+            Reserve your meal quickly and without waiting
         </h1>
 
         <p>
-            Order delicious meals around your campus quickly and easily.
+            Browse the daily menu, choose your meal, and pick it up easily using a QR code.
         </p>
 
         <div class="hero-buttons">
 
-            <button class="btn-order">
-                Order Now
-            </button>
+            @if (User?.Identity?.IsAuthenticated ?? false)
+            {
+                <a class="btn-order" asp-controller="Rezervacija" asp-action="Create">Order Now</a>
+            }
+            else
+            {
+                <a class="btn-order" asp-area="Identity" asp-page="/Account/Login" asp-route-returnUrl="~/Rezervacija/Create">Order Now</a>
+            }
 
-            <button class="btn-menu">
-                Explore Menu
-            </button>
+            <a class="btn-menu" asp-controller="Home" asp-action="Index" asp-fragment="popular-food">Explore Menu</a>
 
         </div>
 
@@ -41,9 +42,30 @@
 
 </section>
 
-<section class="popular-food">
+<section class="how-section meals" id="how">
+    <h2 class="section-title">How CampusEats Works</h2>
+    <div class="meal-cards">
+        <div class="meal-card">
+            <img src="https://images.unsplash.com/photo-1555992336-03a23cbb6e58" alt="Browse menu">
+            <h3>Browse Menu</h3>
+            <p>Check daily meals and prices.</p>
+        </div>
+        <div class="meal-card">
+            <img src="https://images.unsplash.com/photo-1499028344343-cd173ffc68a9" alt="Reserve">
+            <h3>Reserve</h3>
+            <p>Select a meal and reserve it for pickup.</p>
+        </div>
+        <div class="meal-card">
+            <img src="https://images.unsplash.com/photo-1541544180-9a2f1df3b9d8" alt="Pickup">
+            <h3>Pickup with QR</h3>
+            <p>Show your QR code and pick up quickly.</p>
+        </div>
+    </div>
+</section>
 
-    <h2>Popularna jela</h2>
+<section class="popular-food" id="popular-food">
+
+    <h2>Popular Meals</h2>
 
     <div class="food-container">
 
@@ -59,7 +81,14 @@
 
                 <h4>8.99 KM</h4>
 
-                <button>Naruči</button>
+                @if (User?.Identity?.IsAuthenticated ?? false)
+                {
+                    <a class="food-info-btn btn-order" asp-controller="Rezervacija" asp-action="Create">Order</a>
+                }
+                else
+                {
+                    <a class="food-info-btn btn-order" asp-area="Identity" asp-page="/Account/Login" asp-route-returnUrl="~/Rezervacija/Create">Order</a>
+                }
 
             </div>
 
@@ -77,7 +106,14 @@
 
                 <h4>12.50 KM</h4>
 
-                <button>Naruči</button>
+                @if (User?.Identity?.IsAuthenticated ?? false)
+                {
+                    <a class="food-info-btn btn-order" asp-controller="Rezervacija" asp-action="Create">Order</a>
+                }
+                else
+                {
+                    <a class="food-info-btn btn-order" asp-area="Identity" asp-page="/Account/Login" asp-route-returnUrl="~/Rezervacija/Create">Order</a>
+                }
 
             </div>
 
@@ -95,7 +131,14 @@
 
                 <h4>7.50 KM</h4>
 
-                <button>Naruči</button>
+                @if (User?.Identity?.IsAuthenticated ?? false)
+                {
+                    <a class="food-info-btn btn-order" asp-controller="Rezervacija" asp-action="Create">Order</a>
+                }
+                else
+                {
+                    <a class="food-info-btn btn-order" asp-area="Identity" asp-page="/Account/Login" asp-route-returnUrl="~/Rezervacija/Create">Order</a>
+                }
 
             </div>
 
@@ -105,7 +148,28 @@
 
 </section>
 
-<section class="about-section">
+<section class="meals" id="benefits">
+    <h2 class="section-title">Why Use CampusEats</h2>
+    <div class="meal-cards">
+        <div class="meal-card">
+            <img src="https://images.unsplash.com/photo-1543353071-873f17a7a088" alt="speed">
+            <h3>Fast Pickup</h3>
+            <p>Skip the line and save time.</p>
+        </div>
+        <div class="meal-card">
+            <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd" alt="variety">
+            <h3>Daily Variety</h3>
+            <p>Fresh meals every day.</p>
+        </div>
+        <div class="meal-card">
+            <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd" alt="easy">
+            <h3>Easy to Use</h3>
+            <p>Simple interface for quick reservations.</p>
+        </div>
+    </div>
+</section>
+
+<section class="about-section" id="about">
 
     <div class="about-left">
 
@@ -116,17 +180,14 @@
 
     <div class="about-right">
 
-        <h2>O nama</h2>
+        <h2>About Us</h2>
 
         <p>
-            CampusEats je aplikacija namijenjena studentima koja omogućava
-            brzo pregledanje menija, rezervaciju obroka i preuzimanje hrane
-            bez čekanja u redu.
+            CampusEats is an application for students that enables quick menu browsing, meal reservations and pickup without waiting in line.
         </p>
 
         <p>
-            Naš cilj je studentima olakšati svakodnevnu ishranu i omogućiti
-            jednostavno korištenje restoranskih usluga putem moderne web aplikacije.
+            Our goal is to make daily meals easier for students and provide a simple way to use restaurant services through a modern web application.
         </p>
 
 
@@ -141,9 +202,9 @@
 
         <h3>CampusEats</h3>
 
-        <a href="#">Lokacija</a>
-        <a href="#">O nama</a>
-        <a href="#">Kontakt</a>
+        <a href="#">Location</a>
+        <a href="#about">About Us</a>
+        <a href="#">Contact</a>
 
     </div>
 
@@ -155,3 +216,14 @@
     </div>
 
 </footer>
+
+@section Scripts {
+    <script>
+        // Enable smooth scrolling via CSS when available
+        document.addEventListener('DOMContentLoaded', function () {
+            try {
+                document.documentElement.style.scrollBehavior = 'smooth';
+            } catch (e) { }
+        });
+    </script>
+}

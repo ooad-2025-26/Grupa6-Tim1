@@ -5,14 +5,12 @@
 }
 
 .navbar {
-    background-color: #2e9f44;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px 50px;
-    border-radius: 15px;
-    margin: 20px auto;
-    width: 90%;
+    /* avoid overriding custom ce-navbar; keep legacy usage minimal */
+    background-color: transparent;
+    display: block;
+    padding: 0;
+    margin: 0;
+    width: 100%;
 }
 
 .logo {
@@ -40,9 +38,9 @@
     margin-left: auto;
 }
 .nav-center a {
-    color: white;
-    text-decoration: none;
-    font-size: 18px;
+    color: white!important;
+    text-decoration: none!important;
+    font-size: 16px;
 }
 
 .nav-right a {
