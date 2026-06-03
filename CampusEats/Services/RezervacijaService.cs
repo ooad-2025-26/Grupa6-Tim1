@@ -37,10 +37,10 @@ namespace CampusEats.Services
             return true;
         }
 
-        public async Task<List<Rezervacija>> GetAllAsync(string? currentUserId, bool isAdmin)
+        public async Task<List<Rezervacija>> GetAllAsync(string? currentUserId, bool canManageAll)
         {
             var all = await _repo.GetAllAsync();
-            if (isAdmin) return all;
+            if (canManageAll) return all;
             if (string.IsNullOrEmpty(currentUserId)) return new List<Rezervacija>();
             return await _repo.GetByUserIdAsync(currentUserId);
         }
@@ -55,11 +55,11 @@ namespace CampusEats.Services
             return await _repo.GetByUserIdAsync(userId);
         }
 
-        public async Task<bool> UpdateAsync(Rezervacija rezervacija, string currentUserId, bool isAdmin)
+        public async Task<bool> UpdateAsync(Rezervacija rezervacija, string currentUserId, bool canManageAll)
         {
             var existing = await _repo.GetByIdAsync(rezervacija.Id);
             if (existing == null) return false;
-            if (!isAdmin && existing.KorisnikId != currentUserId) return false;
+            if (!canManageAll && existing.KorisnikId != currentUserId) return false;
             // preserve owner
             rezervacija.KorisnikId = existing.KorisnikId;
             await _repo.UpdateAsync(rezervacija);

@@ -14,10 +14,12 @@ namespace CampusEats.Controllers
     public class QRKodController : Controller
     {
         private readonly CampusEats.Interfaces.IQRKodService _service;
+        private readonly CampusEats.Interfaces.IRezervacijaRepository _rezRepo;
 
-        public QRKodController(CampusEats.Interfaces.IQRKodService service)
+        public QRKodController(CampusEats.Interfaces.IQRKodService service, CampusEats.Interfaces.IRezervacijaRepository rezRepo)
         {
             _service = service;
+            _rezRepo = rezRepo;
         }
 
         // GET: QRKod
@@ -44,9 +46,10 @@ namespace CampusEats.Controllers
         }
 
         // GET: QRKod/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["RezervacijaId"] = new SelectList(HttpContext.RequestServices.GetRequiredService<CampusEats.Data.DataContext>().Rezervacije, "Id", "Id");
+            var rez = await _rezRepo.GetAllAsync();
+            ViewData["RezervacijaId"] = new SelectList(rez, "Id", "Id");
             return View();
         }
 
@@ -62,7 +65,8 @@ namespace CampusEats.Controllers
                 await _service.CreateAsync(qRKod);
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["RezervacijaId"] = new SelectList(HttpContext.RequestServices.GetRequiredService<CampusEats.Data.DataContext>().Rezervacije, "Id", "Id", qRKod.RezervacijaId);
+            var rez2 = await _rezRepo.GetAllAsync();
+            ViewData["RezervacijaId"] = new SelectList(rez2, "Id", "Id", qRKod.RezervacijaId);
             return View(qRKod);
         }
 
@@ -79,7 +83,8 @@ namespace CampusEats.Controllers
             {
                 return NotFound();
             }
-            ViewData["RezervacijaId"] = new SelectList(HttpContext.RequestServices.GetRequiredService<CampusEats.Data.DataContext>().Rezervacije, "Id", "Id", qRKod.RezervacijaId);
+            var rez3 = await _rezRepo.GetAllAsync();
+            ViewData["RezervacijaId"] = new SelectList(rez3, "Id", "Id", qRKod.RezervacijaId);
             return View(qRKod);
         }
 
@@ -115,7 +120,8 @@ namespace CampusEats.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["RezervacijaId"] = new SelectList(HttpContext.RequestServices.GetRequiredService<CampusEats.Data.DataContext>().Rezervacije, "Id", "Id", qRKod.RezervacijaId);
+            var rez4 = await _rezRepo.GetAllAsync();
+            ViewData["RezervacijaId"] = new SelectList(rez4, "Id", "Id", qRKod.RezervacijaId);
             return View(qRKod);
         }
 

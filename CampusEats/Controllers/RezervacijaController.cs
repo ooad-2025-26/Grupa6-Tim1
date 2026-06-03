@@ -28,8 +28,8 @@ namespace CampusEats.Controllers
         public async Task<IActionResult> Index()
         {
             var userId = _userManager.GetUserId(User);
-            var isAdmin = User.IsInRole("Admin");
-            var list = await _service.GetAllAsync(userId, isAdmin);
+            var canManageAll = User.IsInRole("Admin") || User.IsInRole("Radnik");
+            var list = await _service.GetAllAsync(userId, canManageAll);
             return View(list);
         }
 
@@ -46,7 +46,6 @@ namespace CampusEats.Controllers
             {
                 return NotFound();
             }
-
             return View(rezervacija);
         }
 
@@ -94,7 +93,8 @@ namespace CampusEats.Controllers
                 return NotFound();
             }
             var userId = _userManager.GetUserId(User);
-            if (!User.IsInRole("Admin") && rezervacija.KorisnikId != userId)
+            var canManageAll = User.IsInRole("Admin") || User.IsInRole("Radnik");
+            if (!canManageAll && rezervacija.KorisnikId != userId)
             {
                 return Forbid();
             }
@@ -117,8 +117,8 @@ namespace CampusEats.Controllers
             if (ModelState.IsValid)
             {
                 var userId = _userManager.GetUserId(User);
-                var isAdmin = User.IsInRole("Admin");
-                var updated = await _service.UpdateAsync(rezervacija, userId, isAdmin);
+                var canManageAll = User.IsInRole("Admin") || User.IsInRole("Radnik");
+                var updated = await _service.UpdateAsync(rezervacija, userId, canManageAll);
                 if (!updated)
                 {
                     if (await _service.GetByIdAsync(rezervacija.Id) == null)
@@ -162,8 +162,8 @@ namespace CampusEats.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var userId = _userManager.GetUserId(User);
-            var isAdmin = User.IsInRole("Admin");
-            var deleted = await _service.DeleteAsync(id, userId, isAdmin);
+            var canManageAll = User.IsInRole("Admin") || User.IsInRole("Radnik");
+            var deleted = await _service.DeleteAsync(id, userId, canManageAll);
             if (!deleted) return NotFound();
             return RedirectToAction(nameof(Index));
         }
