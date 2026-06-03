@@ -37,6 +37,7 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
     var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
     var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+    var logger = services.GetRequiredService<ILogger<Program>>();
 
     async Task EnsureUser(string email, string password, string role, string first = "Demo", string last = "User")
     {
@@ -50,8 +51,8 @@ using (var scope = app.Services.CreateScope())
                 EmailConfirmed = true,
                 Ime = first,
                 Prezime = last,
-                BrojIndeksa = role == "Student" ? "2025/000" : string.Empty,
-                Adresa = string.Empty
+                BrojIndeksa = role == "Student" ? "2025/000" : "N/A",
+                Adresa = "N/A"
             };
             var create = await userManager.CreateAsync(user, password);
             if (create.Succeeded)
@@ -59,13 +60,71 @@ using (var scope = app.Services.CreateScope())
                 if (!await roleManager.RoleExistsAsync(role))
                     await roleManager.CreateAsync(new IdentityRole(role));
                 await userManager.AddToRoleAsync(user, role);
+                logger.LogInformation("Created demo user {Email} with role {Role}", email, role);
+            }
+            else
+            {
+                logger.LogError("Failed creating demo user {Email}: {Errors}", email, string.Join(';', create.Errors.Select(e => e.Description)));
             }
         }
         else
         {
+            // update required fields and ensure email confirmed
+            var updated = false;
+            if (user.Ime != first) { user.Ime = first; updated = true; }
+            if (user.Prezime != last) { user.Prezime = last; updated = true; }
+            if (string.IsNullOrEmpty(user.BrojIndeksa) && role == "Student") { user.BrojIndeksa = "2025/000"; updated = true; }
+            if (string.IsNullOrEmpty(user.Adresa)) { user.Adresa = "N/A"; updated = true; }
+            if (!user.EmailConfirmed) { user.EmailConfirmed = true; updated = true; }
+            if (updated)
+            {
+                var upRes = await userManager.UpdateAsync(user);
+                if (!upRes.Succeeded)
+                    logger.LogWarning("Failed updating demo user {Email}: {Errors}", email, string.Join(';', upRes.Errors.Select(e => e.Description)));
+            }
+
             // ensure role assigned
             if (!await userManager.IsInRoleAsync(user, role))
                 await userManager.AddToRoleAsync(user, role);
+
+            // reset the password to the expected demo password
+            try
+            {
+                var token = await userManager.GeneratePasswordResetTokenAsync(user);
+                var reset = await userManager.ResetPasswordAsync(user, token, password);
+                if (!reset.Succeeded)
+                {
+                    // fallback: if user has a password, remove it then try to add; otherwise try AddPasswordAsync
+                    if (await userManager.HasPasswordAsync(user))
+                    {
+                        var remove = await userManager.RemovePasswordAsync(user);
+                        if (remove.Succeeded)
+                        {
+                            var add = await userManager.AddPasswordAsync(user, password);
+                            if (!add.Succeeded)
+                            {
+                                logger.LogError("Failed setting demo password for {Email}: {Errors}", email, string.Join(';', add.Errors.Select(e => e.Description)));
+                            }
+                        }
+                        else
+                        {
+                            logger.LogError("Failed removing existing password for {Email}: {Errors}", email, string.Join(';', remove.Errors.Select(e => e.Description)));
+                        }
+                    }
+                    else
+                    {
+                        var add = await userManager.AddPasswordAsync(user, password);
+                        if (!add.Succeeded)
+                        {
+                            logger.LogError("Failed adding demo password for {Email}: {Errors}", email, string.Join(';', add.Errors.Select(e => e.Description)));
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Exception while resetting password for demo user {Email}", email);
+            }
         }
     }
 
