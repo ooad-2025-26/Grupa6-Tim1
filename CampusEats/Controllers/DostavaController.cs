@@ -13,18 +13,17 @@ namespace CampusEats.Controllers
     [Microsoft.AspNetCore.Authorization.Authorize]
     public class DostavaController : Controller
     {
-        private readonly DataContext _context;
+        private readonly CampusEats.Interfaces.IDostavaService _service;
 
-        public DostavaController(DataContext context)
+        public DostavaController(CampusEats.Interfaces.IDostavaService service)
         {
-            _context = context;
+            _service = service;
         }
 
         // GET: Dostava
         public async Task<IActionResult> Index()
         {
-            var dataContext = _context.Dostave.Include(d => d.Rezervacija);
-            return View(await dataContext.ToListAsync());
+            return View(await _service.GetAllAsync());
         }
 
         // GET: Dostava/Details/5
@@ -35,9 +34,7 @@ namespace CampusEats.Controllers
                 return NotFound();
             }
 
-            var dostava = await _context.Dostave
-                .Include(d => d.Rezervacija)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var dostava = await _service.GetByIdAsync(id.Value);
             if (dostava == null)
             {
                 return NotFound();
@@ -49,7 +46,7 @@ namespace CampusEats.Controllers
         // GET: Dostava/Create
         public IActionResult Create()
         {
-            ViewData["RezervacijaId"] = new SelectList(_context.Rezervacije, "Id", "Id");
+            ViewData["RezervacijaId"] = new SelectList(HttpContext.RequestServices.GetRequiredService<CampusEats.Data.DataContext>().Rezervacije, "Id", "Id");
             return View();
         }
 
@@ -62,11 +59,10 @@ namespace CampusEats.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(dostava);
-                await _context.SaveChangesAsync();
+                await _service.CreateAsync(dostava);
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["RezervacijaId"] = new SelectList(_context.Rezervacije, "Id", "Id", dostava.RezervacijaId);
+            ViewData["RezervacijaId"] = new SelectList(HttpContext.RequestServices.GetRequiredService<CampusEats.Data.DataContext>().Rezervacije, "Id", "Id", dostava.RezervacijaId);
             return View(dostava);
         }
 
@@ -78,12 +74,12 @@ namespace CampusEats.Controllers
                 return NotFound();
             }
 
-            var dostava = await _context.Dostave.FindAsync(id);
+            var dostava = await _service.GetByIdAsync(id.Value);
             if (dostava == null)
             {
                 return NotFound();
             }
-            ViewData["RezervacijaId"] = new SelectList(_context.Rezervacije, "Id", "Id", dostava.RezervacijaId);
+            ViewData["RezervacijaId"] = new SelectList(HttpContext.RequestServices.GetRequiredService<CampusEats.Data.DataContext>().Rezervacije, "Id", "Id", dostava.RezervacijaId);
             return View(dostava);
         }
 
@@ -103,12 +99,12 @@ namespace CampusEats.Controllers
             {
                 try
                 {
-                    _context.Update(dostava);
-                    await _context.SaveChangesAsync();
+                    var updated = await _service.UpdateAsync(dostava);
+                    if (!updated) return NotFound();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!DostavaExists(dostava.Id))
+                    if (await _service.GetByIdAsync(dostava.Id) == null)
                     {
                         return NotFound();
                     }
@@ -119,7 +115,7 @@ namespace CampusEats.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["RezervacijaId"] = new SelectList(_context.Rezervacije, "Id", "Id", dostava.RezervacijaId);
+            ViewData["RezervacijaId"] = new SelectList(HttpContext.RequestServices.GetRequiredService<CampusEats.Data.DataContext>().Rezervacije, "Id", "Id", dostava.RezervacijaId);
             return View(dostava);
         }
 
@@ -131,9 +127,7 @@ namespace CampusEats.Controllers
                 return NotFound();
             }
 
-            var dostava = await _context.Dostave
-                .Include(d => d.Rezervacija)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var dostava = await _service.GetByIdAsync(id.Value);
             if (dostava == null)
             {
                 return NotFound();
@@ -147,19 +141,17 @@ namespace CampusEats.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var dostava = await _context.Dostave.FindAsync(id);
-            if (dostava != null)
+            var deleted = await _service.DeleteAsync(id);
+            if (!deleted)
             {
-                _context.Dostave.Remove(dostava);
+                // not found
             }
-
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool DostavaExists(int id)
+        private async Task<bool> DostavaExists(int id)
         {
-            return _context.Dostave.Any(e => e.Id == id);
+            return await _service.ExistsAsync(id);
         }
     }
 }

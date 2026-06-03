@@ -13,17 +13,17 @@ namespace CampusEats.Controllers
     [Microsoft.AspNetCore.Authorization.Authorize]
     public class ZalihaController : Controller
     {
-        private readonly DataContext _context;
+        private readonly CampusEats.Interfaces.IZalihaService _service;
 
-        public ZalihaController(DataContext context)
+        public ZalihaController(CampusEats.Interfaces.IZalihaService service)
         {
-            _context = context;
+            _service = service;
         }
 
         // GET: Zaliha
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Zalihe.ToListAsync());
+            return View(await _service.GetAllAsync());
         }
 
         // GET: Zaliha/Details/5
@@ -34,8 +34,7 @@ namespace CampusEats.Controllers
                 return NotFound();
             }
 
-            var zaliha = await _context.Zalihe
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var zaliha = await _service.GetByIdAsync(id.Value);
             if (zaliha == null)
             {
                 return NotFound();
@@ -59,8 +58,7 @@ namespace CampusEats.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(zaliha);
-                await _context.SaveChangesAsync();
+                await _service.CreateAsync(zaliha);
                 return RedirectToAction(nameof(Index));
             }
             return View(zaliha);
@@ -74,7 +72,7 @@ namespace CampusEats.Controllers
                 return NotFound();
             }
 
-            var zaliha = await _context.Zalihe.FindAsync(id);
+            var zaliha = await _service.GetByIdAsync(id.Value);
             if (zaliha == null)
             {
                 return NotFound();
@@ -98,12 +96,12 @@ namespace CampusEats.Controllers
             {
                 try
                 {
-                    _context.Update(zaliha);
-                    await _context.SaveChangesAsync();
+                    var updated = await _service.UpdateAsync(zaliha);
+                    if (!updated) return NotFound();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ZalihaExists(zaliha.Id))
+                    if (await _service.GetByIdAsync(zaliha.Id) == null)
                     {
                         return NotFound();
                     }
@@ -125,8 +123,7 @@ namespace CampusEats.Controllers
                 return NotFound();
             }
 
-            var zaliha = await _context.Zalihe
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var zaliha = await _service.GetByIdAsync(id.Value);
             if (zaliha == null)
             {
                 return NotFound();
@@ -140,19 +137,17 @@ namespace CampusEats.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var zaliha = await _context.Zalihe.FindAsync(id);
-            if (zaliha != null)
+            var deleted = await _service.DeleteAsync(id);
+            if (!deleted)
             {
-                _context.Zalihe.Remove(zaliha);
+                // not found
             }
-
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ZalihaExists(int id)
+        private async Task<bool> ZalihaExists(int id)
         {
-            return _context.Zalihe.Any(e => e.Id == id);
+            return await _service.ExistsAsync(id);
         }
     }
 }

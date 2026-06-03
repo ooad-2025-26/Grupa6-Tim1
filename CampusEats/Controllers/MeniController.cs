@@ -13,17 +13,17 @@ namespace CampusEats.Controllers
     [Microsoft.AspNetCore.Authorization.Authorize]
     public class MeniController : Controller
     {
-        private readonly DataContext _context;
+        private readonly CampusEats.Interfaces.IMeniService _service;
 
-        public MeniController(DataContext context)
+        public MeniController(CampusEats.Interfaces.IMeniService service)
         {
-            _context = context;
+            _service = service;
         }
 
         // GET: Meni
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Meniji.ToListAsync());
+            return View(await _service.GetAllAsync());
         }
 
         // GET: Meni/Details/5
@@ -34,8 +34,7 @@ namespace CampusEats.Controllers
                 return NotFound();
             }
 
-            var meni = await _context.Meniji
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var meni = await _service.GetByIdAsync(id.Value);
             if (meni == null)
             {
                 return NotFound();
@@ -59,8 +58,7 @@ namespace CampusEats.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(meni);
-                await _context.SaveChangesAsync();
+                await _service.CreateAsync(meni);
                 return RedirectToAction(nameof(Index));
             }
             return View(meni);
@@ -74,7 +72,7 @@ namespace CampusEats.Controllers
                 return NotFound();
             }
 
-            var meni = await _context.Meniji.FindAsync(id);
+            var meni = await _service.GetByIdAsync(id.Value);
             if (meni == null)
             {
                 return NotFound();
@@ -98,12 +96,12 @@ namespace CampusEats.Controllers
             {
                 try
                 {
-                    _context.Update(meni);
-                    await _context.SaveChangesAsync();
+                    var updated = await _service.UpdateAsync(meni);
+                    if (!updated) return NotFound();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!MeniExists(meni.Id))
+                    if (await _service.GetByIdAsync(meni.Id) == null)
                     {
                         return NotFound();
                     }
@@ -125,8 +123,7 @@ namespace CampusEats.Controllers
                 return NotFound();
             }
 
-            var meni = await _context.Meniji
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var meni = await _service.GetByIdAsync(id.Value);
             if (meni == null)
             {
                 return NotFound();
@@ -140,19 +137,17 @@ namespace CampusEats.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var meni = await _context.Meniji.FindAsync(id);
-            if (meni != null)
+            var deleted = await _service.DeleteAsync(id);
+            if (!deleted)
             {
-                _context.Meniji.Remove(meni);
+                // not found
             }
-
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool MeniExists(int id)
+        private async Task<bool> MeniExists(int id)
         {
-            return _context.Meniji.Any(e => e.Id == id);
+            return await _service.GetByIdAsync(id) != null;
         }
     }
 }

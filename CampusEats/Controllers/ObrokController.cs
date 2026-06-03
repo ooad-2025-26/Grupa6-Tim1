@@ -13,17 +13,17 @@ namespace CampusEats.Controllers
     [Microsoft.AspNetCore.Authorization.Authorize]
     public class ObrokController : Controller
     {
-        private readonly DataContext _context;
+        private readonly CampusEats.Interfaces.IObrokService _service;
 
-        public ObrokController(DataContext context)
+        public ObrokController(CampusEats.Interfaces.IObrokService service)
         {
-            _context = context;
+            _service = service;
         }
 
         // GET: Obrok
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Obroci.ToListAsync());
+            return View(await _service.GetAllAsync());
         }
 
         // GET: Obrok/Details/5
@@ -34,8 +34,7 @@ namespace CampusEats.Controllers
                 return NotFound();
             }
 
-            var obrok = await _context.Obroci
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var obrok = await _service.GetByIdAsync(id.Value);
             if (obrok == null)
             {
                 return NotFound();
@@ -59,8 +58,7 @@ namespace CampusEats.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(obrok);
-                await _context.SaveChangesAsync();
+                await _service.CreateAsync(obrok);
                 return RedirectToAction(nameof(Index));
             }
             return View(obrok);
@@ -74,7 +72,7 @@ namespace CampusEats.Controllers
                 return NotFound();
             }
 
-            var obrok = await _context.Obroci.FindAsync(id);
+            var obrok = await _service.GetByIdAsync(id.Value);
             if (obrok == null)
             {
                 return NotFound();
@@ -98,12 +96,12 @@ namespace CampusEats.Controllers
             {
                 try
                 {
-                    _context.Update(obrok);
-                    await _context.SaveChangesAsync();
+                    var updated = await _service.UpdateAsync(obrok);
+                    if (!updated) return NotFound();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ObrokExists(obrok.Id))
+                    if (await _service.GetByIdAsync(obrok.Id) == null)
                     {
                         return NotFound();
                     }
@@ -125,8 +123,7 @@ namespace CampusEats.Controllers
                 return NotFound();
             }
 
-            var obrok = await _context.Obroci
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var obrok = await _service.GetByIdAsync(id.Value);
             if (obrok == null)
             {
                 return NotFound();
@@ -140,19 +137,17 @@ namespace CampusEats.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var obrok = await _context.Obroci.FindAsync(id);
-            if (obrok != null)
+            var deleted = await _service.DeleteAsync(id);
+            if (!deleted)
             {
-                _context.Obroci.Remove(obrok);
+                // if not deleted, treat as not found
             }
-
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ObrokExists(int id)
+        private async Task<bool> ObrokExists(int id)
         {
-            return _context.Obroci.Any(e => e.Id == id);
+            return await _service.GetByIdAsync(id) != null;
         }
     }
 }

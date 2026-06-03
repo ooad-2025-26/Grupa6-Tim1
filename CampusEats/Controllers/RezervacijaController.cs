@@ -13,26 +13,22 @@ namespace CampusEats.Controllers
     [Microsoft.AspNetCore.Authorization.Authorize]
     public class RezervacijaController : Controller
     {
-        private readonly DataContext _context;
+        private readonly CampusEats.Interfaces.IRezervacijaService _service;
         private readonly Microsoft.AspNetCore.Identity.UserManager<CampusEats.Models.ApplicationUser> _userManager;
 
-        public RezervacijaController(DataContext context, Microsoft.AspNetCore.Identity.UserManager<CampusEats.Models.ApplicationUser> userManager)
+        public RezervacijaController(CampusEats.Interfaces.IRezervacijaService service, Microsoft.AspNetCore.Identity.UserManager<CampusEats.Models.ApplicationUser> userManager)
         {
-            _context = context;
+            _service = service;
             _userManager = userManager;
         }
 
         // GET: Rezervacija
         public async Task<IActionResult> Index()
         {
-            var query = _context.Rezervacije.Include(r => r.Korisnik).Include(r => r.Obrok).AsQueryable();
             var userId = _userManager.GetUserId(User);
-            if (!User.IsInRole("Admin"))
-            {
-                // regular users only see their own
-                query = query.Where(r => r.KorisnikId == userId);
-            }
-            return View(await query.ToListAsync());
+            var isAdmin = User.IsInRole("Admin");
+            var list = await _service.GetAllAsync(userId, isAdmin);
+            return View(list);
         }
 
         // GET: Rezervacija/Details/5
@@ -43,10 +39,7 @@ namespace CampusEats.Controllers
                 return NotFound();
             }
 
-            var rezervacija = await _context.Rezervacije
-                .Include(r => r.Korisnik)
-                .Include(r => r.Obrok)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var rezervacija = await _service.GetByIdAsync(id.Value);
             if (rezervacija == null)
             {
                 return NotFound();
@@ -63,7 +56,7 @@ namespace CampusEats.Controllers
                 Datum = DateTime.Now,
                 Status = StatusRezervacije.Kreirana
             };
-            ViewData["ObrokId"] = new SelectList(_context.Obroci, "Id", "Naziv");
+            ViewData["ObrokId"] = new SelectList(HttpContext.RequestServices.GetRequiredService<CampusEats.Data.DataContext>().Obroci, "Id", "Naziv");
             return View(model);
         }
 
@@ -76,13 +69,11 @@ namespace CampusEats.Controllers
         {
             if (ModelState.IsValid)
             {
-                // assign current user as owner
-                rezervacija.KorisnikId = _userManager.GetUserId(User);
-                _context.Add(rezervacija);
-                await _context.SaveChangesAsync();
+                var userId = _userManager.GetUserId(User);
+                await _service.CreateReservationAsync(userId, rezervacija.ObrokId);
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ObrokId"] = new SelectList(_context.Obroci, "Id", "Naziv", rezervacija.ObrokId);
+            ViewData["ObrokId"] = new SelectList(HttpContext.RequestServices.GetRequiredService<CampusEats.Data.DataContext>().Obroci, "Id", "Naziv", rezervacija.ObrokId);
             return View(rezervacija);
         }
 
@@ -93,7 +84,7 @@ namespace CampusEats.Controllers
             {
                 return NotFound();
             }
-            var rezervacija = await _context.Rezervacije.Include(r => r.Korisnik).FirstOrDefaultAsync(r => r.Id == id);
+            var rezervacija = await _service.GetByIdAsync(id.Value);
             if (rezervacija == null)
             {
                 return NotFound();
@@ -103,7 +94,7 @@ namespace CampusEats.Controllers
             {
                 return Forbid();
             }
-            ViewData["ObrokId"] = new SelectList(_context.Obroci, "Id", "Naziv", rezervacija.ObrokId);
+            ViewData["ObrokId"] = new SelectList(HttpContext.RequestServices.GetRequiredService<CampusEats.Data.DataContext>().Obroci, "Id", "Naziv", rezervacija.ObrokId);
             return View(rezervacija);
         }
 
@@ -121,34 +112,20 @@ namespace CampusEats.Controllers
 
             if (ModelState.IsValid)
             {
-                try
+                var userId = _userManager.GetUserId(User);
+                var isAdmin = User.IsInRole("Admin");
+                var updated = await _service.UpdateAsync(rezervacija, userId, isAdmin);
+                if (!updated)
                 {
-                    // preserve owner
-                    var existing = await _context.Rezervacije.AsNoTracking().FirstOrDefaultAsync(r => r.Id == id);
-                    if (existing == null) return NotFound();
-                    var userId = _userManager.GetUserId(User);
-                    if (!User.IsInRole("Admin") && existing.KorisnikId != userId)
-                    {
-                        return Forbid();
-                    }
-                    rezervacija.KorisnikId = existing.KorisnikId;
-                    _context.Update(rezervacija);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!RezervacijaExists(rezervacija.Id))
+                    if (await _service.GetByIdAsync(rezervacija.Id) == null)
                     {
                         return NotFound();
                     }
-                    else
-                    {
-                        throw;
-                    }
+                    return Forbid();
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ObrokId"] = new SelectList(_context.Obroci, "Id", "Naziv", rezervacija.ObrokId);
+            ViewData["ObrokId"] = new SelectList(HttpContext.RequestServices.GetRequiredService<CampusEats.Data.DataContext>().Obroci, "Id", "Naziv", rezervacija.ObrokId);
             return View(rezervacija);
         }
 
@@ -160,10 +137,7 @@ namespace CampusEats.Controllers
                 return NotFound();
             }
 
-            var rezervacija = await _context.Rezervacije
-                .Include(r => r.Korisnik)
-                .Include(r => r.Obrok)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var rezervacija = await _service.GetByIdAsync(id.Value);
             if (rezervacija == null)
             {
                 return NotFound();
@@ -183,21 +157,16 @@ namespace CampusEats.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var rezervacija = await _context.Rezervacije.FindAsync(id);
-            if (rezervacija == null) return NotFound();
             var userId = _userManager.GetUserId(User);
-            if (!User.IsInRole("Admin") && rezervacija.KorisnikId != userId)
-            {
-                return Forbid();
-            }
-            _context.Rezervacije.Remove(rezervacija);
-            await _context.SaveChangesAsync();
+            var isAdmin = User.IsInRole("Admin");
+            var deleted = await _service.DeleteAsync(id, userId, isAdmin);
+            if (!deleted) return NotFound();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool RezervacijaExists(int id)
+        private async Task<bool> RezervacijaExists(int id)
         {
-            return _context.Rezervacije.Any(e => e.Id == id);
+            return await _service.GetByIdAsync(id) != null;
         }
     }
 }

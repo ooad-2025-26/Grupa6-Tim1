@@ -15,6 +15,20 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<DataContext>()
     .AddDefaultTokenProviders();
 
+// Register Obrok repository and service
+builder.Services.AddScoped<CampusEats.Interfaces.IObrokRepository, CampusEats.Repositories.ObrokRepository>();
+builder.Services.AddScoped<CampusEats.Interfaces.IObrokService, CampusEats.Services.ObrokService>();
+builder.Services.AddScoped<CampusEats.Interfaces.IRezervacijaRepository, CampusEats.Repositories.RezervacijaRepository>();
+builder.Services.AddScoped<CampusEats.Interfaces.IRezervacijaService, CampusEats.Services.RezervacijaService>();
+builder.Services.AddScoped<CampusEats.Interfaces.IMeniRepository, CampusEats.Repositories.MeniRepository>();
+builder.Services.AddScoped<CampusEats.Interfaces.IMeniService, CampusEats.Services.MeniService>();
+builder.Services.AddScoped<CampusEats.Interfaces.IQRKodRepository, CampusEats.Repositories.QRKodRepository>();
+builder.Services.AddScoped<CampusEats.Interfaces.IQRKodService, CampusEats.Services.QRKodService>();
+builder.Services.AddScoped<CampusEats.Interfaces.IDostavaRepository, CampusEats.Repositories.DostavaRepository>();
+builder.Services.AddScoped<CampusEats.Interfaces.IDostavaService, CampusEats.Services.DostavaService>();
+builder.Services.AddScoped<CampusEats.Interfaces.IZalihaRepository, CampusEats.Repositories.ZalihaRepository>();
+builder.Services.AddScoped<CampusEats.Interfaces.IZalihaService, CampusEats.Services.ZalihaService>();
+
 var app = builder.Build();
 
 using (var scope= app.Services.CreateScope())

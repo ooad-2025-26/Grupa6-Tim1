@@ -13,18 +13,17 @@ namespace CampusEats.Controllers
     [Microsoft.AspNetCore.Authorization.Authorize]
     public class QRKodController : Controller
     {
-        private readonly DataContext _context;
+        private readonly CampusEats.Interfaces.IQRKodService _service;
 
-        public QRKodController(DataContext context)
+        public QRKodController(CampusEats.Interfaces.IQRKodService service)
         {
-            _context = context;
+            _service = service;
         }
 
         // GET: QRKod
         public async Task<IActionResult> Index()
         {
-            var dataContext = _context.QRKodovi.Include(q => q.Rezervacija);
-            return View(await dataContext.ToListAsync());
+            return View(await _service.GetAllAsync());
         }
 
         // GET: QRKod/Details/5
@@ -35,9 +34,7 @@ namespace CampusEats.Controllers
                 return NotFound();
             }
 
-            var qRKod = await _context.QRKodovi
-                .Include(q => q.Rezervacija)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var qRKod = await _service.GetByIdAsync(id.Value);
             if (qRKod == null)
             {
                 return NotFound();
@@ -49,7 +46,7 @@ namespace CampusEats.Controllers
         // GET: QRKod/Create
         public IActionResult Create()
         {
-            ViewData["RezervacijaId"] = new SelectList(_context.Rezervacije, "Id", "Id");
+            ViewData["RezervacijaId"] = new SelectList(HttpContext.RequestServices.GetRequiredService<CampusEats.Data.DataContext>().Rezervacije, "Id", "Id");
             return View();
         }
 
@@ -62,11 +59,10 @@ namespace CampusEats.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(qRKod);
-                await _context.SaveChangesAsync();
+                await _service.CreateAsync(qRKod);
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["RezervacijaId"] = new SelectList(_context.Rezervacije, "Id", "Id", qRKod.RezervacijaId);
+            ViewData["RezervacijaId"] = new SelectList(HttpContext.RequestServices.GetRequiredService<CampusEats.Data.DataContext>().Rezervacije, "Id", "Id", qRKod.RezervacijaId);
             return View(qRKod);
         }
 
@@ -78,12 +74,12 @@ namespace CampusEats.Controllers
                 return NotFound();
             }
 
-            var qRKod = await _context.QRKodovi.FindAsync(id);
+            var qRKod = await _service.GetByIdAsync(id.Value);
             if (qRKod == null)
             {
                 return NotFound();
             }
-            ViewData["RezervacijaId"] = new SelectList(_context.Rezervacije, "Id", "Id", qRKod.RezervacijaId);
+            ViewData["RezervacijaId"] = new SelectList(HttpContext.RequestServices.GetRequiredService<CampusEats.Data.DataContext>().Rezervacije, "Id", "Id", qRKod.RezervacijaId);
             return View(qRKod);
         }
 
@@ -103,12 +99,12 @@ namespace CampusEats.Controllers
             {
                 try
                 {
-                    _context.Update(qRKod);
-                    await _context.SaveChangesAsync();
+                    var updated = await _service.UpdateAsync(qRKod);
+                    if (!updated) return NotFound();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!QRKodExists(qRKod.Id))
+                    if (await _service.GetByIdAsync(qRKod.Id) == null)
                     {
                         return NotFound();
                     }
@@ -119,7 +115,7 @@ namespace CampusEats.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["RezervacijaId"] = new SelectList(_context.Rezervacije, "Id", "Id", qRKod.RezervacijaId);
+            ViewData["RezervacijaId"] = new SelectList(HttpContext.RequestServices.GetRequiredService<CampusEats.Data.DataContext>().Rezervacije, "Id", "Id", qRKod.RezervacijaId);
             return View(qRKod);
         }
 
@@ -131,9 +127,7 @@ namespace CampusEats.Controllers
                 return NotFound();
             }
 
-            var qRKod = await _context.QRKodovi
-                .Include(q => q.Rezervacija)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var qRKod = await _service.GetByIdAsync(id.Value);
             if (qRKod == null)
             {
                 return NotFound();
@@ -147,19 +141,17 @@ namespace CampusEats.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var qRKod = await _context.QRKodovi.FindAsync(id);
-            if (qRKod != null)
+            var deleted = await _service.DeleteAsync(id);
+            if (!deleted)
             {
-                _context.QRKodovi.Remove(qRKod);
+                // not found
             }
-
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool QRKodExists(int id)
+        private async Task<bool> QRKodExists(int id)
         {
-            return _context.QRKodovi.Any(e => e.Id == id);
+            return await _service.GetByIdAsync(id) != null;
         }
     }
 }
