@@ -65,7 +65,7 @@ namespace CampusEats.Controllers
         }
 
         [HttpGet]
-        public IActionResult Login(string returnUrl = null)
+        public IActionResult Login(string? returnUrl = null)
         {
             return View(new LoginViewModel { ReturnUrl = returnUrl });
         }
@@ -75,27 +75,31 @@ namespace CampusEats.Controllers
         {
             if (!ModelState.IsValid)
             {
-                ModelState.AddModelError(string.Empty, "ModelState is invalid.");
                 return View(model);
             }
 
             var email = model.Email?.Trim();
-
             var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
             {
-                ModelState.AddModelError(string.Empty, "User not found: " + email);
+                ModelState.AddModelError(string.Empty, "Invalid email or password.");
                 return View(model);
             }
 
             var passwordOk = await _userManager.CheckPasswordAsync(user, model.Password);
             if (!passwordOk)
             {
-                ModelState.AddModelError(string.Empty, "Password is incorrect for: " + email);
+                ModelState.AddModelError(string.Empty, "Invalid email or password.");
                 return View(model);
             }
 
             await _signInManager.SignInAsync(user, isPersistent: model.RememberMe);
+
+            // prefer redirect to ReturnUrl when local
+            if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
+            {
+                return Redirect(model.ReturnUrl!);
+            }
 
             return RedirectToAction("Index", "Home");
         }

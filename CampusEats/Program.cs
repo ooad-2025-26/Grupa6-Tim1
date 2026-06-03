@@ -15,7 +15,7 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<DataContext>()
     .AddDefaultTokenProviders();
 
-// Register Obrok repository and service
+// Repositories and services
 builder.Services.AddScoped<CampusEats.Interfaces.IObrokRepository, CampusEats.Repositories.ObrokRepository>();
 builder.Services.AddScoped<CampusEats.Interfaces.IObrokService, CampusEats.Services.ObrokService>();
 builder.Services.AddScoped<CampusEats.Interfaces.IRezervacijaRepository, CampusEats.Repositories.RezervacijaRepository>();
@@ -31,24 +31,24 @@ builder.Services.AddScoped<CampusEats.Interfaces.IZalihaService, CampusEats.Serv
 
 var app = builder.Build();
 
-using (var scope= app.Services.CreateScope())
+// create roles
+using (var rolesScope = app.Services.CreateScope())
 {
-    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    var roleManager = rolesScope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
     string[] roles = { "Student", "Radnik", "Dostavljac", "Admin" };
-
-    foreach(var r in roles)
+    foreach (var r in roles)
     {
-        if(!await roleManager.RoleExistsAsync(r))
+        if (!await roleManager.RoleExistsAsync(r))
         {
             await roleManager.CreateAsync(new IdentityRole(r));
         }
     }
 }
 
-// Seed demo users for each role if they do not exist
-using (var scope = app.Services.CreateScope())
+// seed users
+using (var usersScope = app.Services.CreateScope())
 {
-    var services = scope.ServiceProvider;
+    var services = usersScope.ServiceProvider;
     var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
     var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
     var logger = services.GetRequiredService<ILogger<Program>>();
@@ -83,7 +83,6 @@ using (var scope = app.Services.CreateScope())
         }
         else
         {
-            // update required fields and ensure email confirmed
             var updated = false;
             if (user.Ime != first) { user.Ime = first; updated = true; }
             if (user.Prezime != last) { user.Prezime = last; updated = true; }
@@ -97,18 +96,15 @@ using (var scope = app.Services.CreateScope())
                     logger.LogWarning("Failed updating demo user {Email}: {Errors}", email, string.Join(';', upRes.Errors.Select(e => e.Description)));
             }
 
-            // ensure role assigned
             if (!await userManager.IsInRoleAsync(user, role))
                 await userManager.AddToRoleAsync(user, role);
 
-            // reset the password to the expected demo password
             try
             {
                 var token = await userManager.GeneratePasswordResetTokenAsync(user);
                 var reset = await userManager.ResetPasswordAsync(user, token, password);
                 if (!reset.Succeeded)
                 {
-                    // fallback: if user has a password, remove it then try to add; otherwise try AddPasswordAsync
                     if (await userManager.HasPasswordAsync(user))
                     {
                         var remove = await userManager.RemovePasswordAsync(user);
@@ -148,10 +144,105 @@ using (var scope = app.Services.CreateScope())
     await EnsureUser("admin@campuseats.com", "Admin123!", "Admin", "Admin", "User");
 }
 
-// Runtime data migration: safely migrate Korisnici -> AspNetUsers using UserManager and parameterized SQL.
-using (var scope = app.Services.CreateScope())
+// Ensure Obrok table has Category and ImageUrl columns and seed sample menu if empty
+using (var schemaScope = app.Services.CreateScope())
 {
-    var services = scope.ServiceProvider;
+    var services = schemaScope.ServiceProvider;
+    var db = services.GetRequiredService<DataContext>();
+    var logger = services.GetRequiredService<ILogger<Program>>();
+
+    try
+    {
+        using var conn = (DbConnection)db.Database.GetDbConnection();
+        await conn.OpenAsync();
+
+        using (var cmd = conn.CreateCommand())
+        {
+            cmd.CommandText = "SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'Obroci' AND COLUMN_NAME = 'Category'";
+            var catCol = Convert.ToInt32(await cmd.ExecuteScalarAsync());
+            if (catCol == 0)
+            {
+                try
+                {
+                    using var alter = conn.CreateCommand();
+                    alter.CommandText = "ALTER TABLE Obroci ADD Category nvarchar(100) NOT NULL DEFAULT 'Meals'";
+                    await alter.ExecuteNonQueryAsync();
+                    logger.LogInformation("Added Obroci.Category column.");
+                }
+                catch (Exception ex)
+                {
+                    logger.LogWarning(ex, "Failed adding Category column to Obroci.");
+                }
+            }
+
+            cmd.CommandText = "SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'Obroci' AND COLUMN_NAME = 'ImageUrl'";
+            var imgCol = Convert.ToInt32(await cmd.ExecuteScalarAsync());
+            if (imgCol == 0)
+            {
+                try
+                {
+                    using var alter = conn.CreateCommand();
+                    alter.CommandText = "ALTER TABLE Obroci ADD ImageUrl nvarchar(400) NOT NULL DEFAULT ''";
+                    await alter.ExecuteNonQueryAsync();
+                    logger.LogInformation("Added Obroci.ImageUrl column.");
+                }
+                catch (Exception ex)
+                {
+                    logger.LogWarning(ex, "Failed adding ImageUrl column to Obroci.");
+                }
+            }
+
+            // seed sample items if table empty
+            cmd.CommandText = "SELECT COUNT(*) FROM Obroci";
+            var count = Convert.ToInt32(await cmd.ExecuteScalarAsync());
+            if (count == 0)
+            {
+                logger.LogInformation("Seeding sample Obroci items.");
+                var items = new[] {
+                    new Obrok { Naziv = "Steak with Potatoes", Opis = "Tender steak with roasted potatoes.", Cijena = 5.50, Sastojci = "Beef, Potatoes, Salt", Dostupan = true, Category = "Meals", ImageUrl = "https://images.unsplash.com/photo-1551183053-bf91a1d81141" },
+                    new Obrok { Naziv = "Pasta Carbonara", Opis = "Classic carbonara with bacon and cheese.", Cijena = 6.00, Sastojci = "Pasta, Eggs, Bacon", Dostupan = true, Category = "Meals", ImageUrl = "https://images.unsplash.com/photo-1523986371872-9d3ba2e2f642" },
+                    new Obrok { Naziv = "Burger and Fries", Opis = "Juicy burger served with crispy fries.", Cijena = 5.00, Sastojci = "Beef, Bun, Potatoes", Dostupan = true, Category = "Meals", ImageUrl = "https://images.unsplash.com/photo-1550547660-d9450f859349" },
+                    new Obrok { Naziv = "Chicken with Vegetables", Opis = "Grilled chicken with seasonal vegetables.", Cijena = 5.50, Sastojci = "Chicken, Vegetables", Dostupan = true, Category = "Meals", ImageUrl = "https://images.unsplash.com/photo-1604908177522-48a6e8b9f2d9" },
+                    new Obrok { Naziv = "Orange Juice", Opis = "Freshly squeezed orange juice.", Cijena = 3.00, Sastojci = "Oranges", Dostupan = true, Category = "Drinks", ImageUrl = "https://images.unsplash.com/photo-1544025162-d76694265947" },
+                    new Obrok { Naziv = "Sparkling Water", Opis = "Chilled sparkling water.", Cijena = 2.00, Sastojci = "Water", Dostupan = true, Category = "Drinks", ImageUrl = "https://images.unsplash.com/photo-1582719478250-66acbaf0dbd2" },
+                    new Obrok { Naziv = "Cola", Opis = "Classic cola drink.", Cijena = 2.50, Sastojci = "Carbonated Water, Sugar", Dostupan = true, Category = "Drinks", ImageUrl = "https://images.unsplash.com/photo-1585386959984-a415522c11f6" },
+                    new Obrok { Naziv = "Coffee", Opis = "Hot brewed coffee.", Cijena = 2.00, Sastojci = "Coffee Beans, Water", Dostupan = true, Category = "Warm Drinks", ImageUrl = "https://images.unsplash.com/photo-1509042239860-f550ce710b93" },
+                    new Obrok { Naziv = "Tea", Opis = "Warm herbal tea.", Cijena = 1.50, Sastojci = "Tea Leaves, Water", Dostupan = true, Category = "Warm Drinks", ImageUrl = "https://images.unsplash.com/photo-1504639725590-34d0984388bd" },
+                    new Obrok { Naziv = "Hot Chocolate", Opis = "Creamy hot chocolate.", Cijena = 2.50, Sastojci = "Cocoa, Milk, Sugar", Dostupan = true, Category = "Warm Drinks", ImageUrl = "https://images.unsplash.com/photo-1547592166-5e9b6f3c4d5f" }
+                };
+
+                foreach (var it in items)
+                {
+                    try
+                    {
+                        db.Obroci.Add(it);
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.LogWarning(ex, "Failed creating sample Obrok: {Name}", it.Naziv);
+                    }
+                }
+                try
+                {
+                    await db.SaveChangesAsync();
+                }
+                catch (Exception ex)
+                {
+                    logger.LogWarning(ex, "Failed saving seeded Obroci items.");
+                }
+            }
+        }
+    }
+    catch (Exception ex)
+    {
+        logger.LogWarning(ex, "Obrok schema/seed check skipped due to error.");
+    }
+}
+
+// Runtime data migration: safely migrate Korisnici -> AspNetUsers using UserManager and parameterized SQL.
+using (var migrationScope = app.Services.CreateScope())
+{
+    var services = migrationScope.ServiceProvider;
     var db = services.GetRequiredService<DataContext>();
     var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
     var logger = services.GetRequiredService<ILogger<Program>>();
@@ -289,3 +380,4 @@ app.MapControllerRoute(
 
 
 app.Run();
+

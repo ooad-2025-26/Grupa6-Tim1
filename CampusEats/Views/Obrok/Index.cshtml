@@ -1,59 +1,67 @@
 ﻿@model IEnumerable<CampusEats.Models.Obrok>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Daily Menu";
 }
 
-<h1>Index</h1>
+<link rel="stylesheet" href="~/css/home.css" />
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Naziv)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Cijena)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Opis)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Sastojci)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Dostupan)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Naziv)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Cijena)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Opis)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Sastojci)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Dostupan)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<div class="container mt-4 bg-white p-4">
+    <h1 class="mb-3">Today’s Menu</h1>
+
+    <div class="btn-group mb-3" role="group" aria-label="filters" id="filterGroup">
+        <button class="btn btn-outline-success filter-btn active" data-filter="All">All</button>
+        <button class="btn btn-outline-success filter-btn" data-filter="Warm Drinks">Warm Drinks</button>
+        <button class="btn btn-outline-success filter-btn" data-filter="Drinks">Drinks</button>
+        <button class="btn btn-outline-success filter-btn" data-filter="Meals">Meals</button>
+    </div>
+
+    <div class="row" id="menuGrid">
+        @foreach (var item in Model)
+        {
+            <div class="col-12 col-md-6 col-lg-4 mb-4 menu-card" data-category="@item.Category">
+                <div class="card h-100">
+                    <img src="@(string.IsNullOrEmpty(item.ImageUrl) ? "https://images.unsplash.com/photo-1544025162-d76694265947" : item.ImageUrl)" class="card-img-top rounded" alt="@item.Naziv" style="height:200px;object-fit:cover;" />
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">@item.Naziv</h5>
+                        <p class="card-text">@item.Opis</p>
+                        <div class="mt-auto d-flex justify-content-between align-items-center">
+                            <div class="price">@String.Format("{0:0.00} KM", item.Cijena)</div>
+                            @if (User.IsInRole("Student") && item.Dostupan)
+                            {
+                                <a class="btn btn-success btn-sm" asp-controller="Rezervacija" asp-action="Create" asp-route-obrokId="@item.Id">Reserve</a>
+                            }
+                            else if (User.IsInRole("Radnik") || User.IsInRole("Admin"))
+                            {
+                                <a class="btn btn-outline-secondary btn-sm" asp-controller="Obrok" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const buttons = document.querySelectorAll('.filter-btn');
+        const cards = document.querySelectorAll('.menu-card');
+
+        buttons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                buttons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const filter = btn.getAttribute('data-filter');
+                cards.forEach(c => {
+                    const cat = c.getAttribute('data-category') || 'Meals';
+                    if (filter === 'All' || cat === filter) {
+                        c.style.display = '';
+                    } else {
+                        c.style.display = 'none';
+                    }
+                });
+            });
+        });
+    });
+</script>

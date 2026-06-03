@@ -17,5 +17,7 @@
         public string Sastojci { get; set; } = string.Empty;
 
         public bool Dostupan { get; set; }
+        public string Category { get; set; } = "Meals";
+        public string ImageUrl { get; set; } = string.Empty;
     }
 }

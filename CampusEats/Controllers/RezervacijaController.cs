@@ -14,11 +14,13 @@ namespace CampusEats.Controllers
     public class RezervacijaController : Controller
     {
         private readonly CampusEats.Interfaces.IRezervacijaService _service;
+        private readonly CampusEats.Interfaces.IObrokRepository _obrokRepo;
         private readonly Microsoft.AspNetCore.Identity.UserManager<CampusEats.Models.ApplicationUser> _userManager;
 
-        public RezervacijaController(CampusEats.Interfaces.IRezervacijaService service, Microsoft.AspNetCore.Identity.UserManager<CampusEats.Models.ApplicationUser> userManager)
+        public RezervacijaController(CampusEats.Interfaces.IRezervacijaService service, CampusEats.Interfaces.IObrokRepository obrokRepo, Microsoft.AspNetCore.Identity.UserManager<CampusEats.Models.ApplicationUser> userManager)
         {
             _service = service;
+            _obrokRepo = obrokRepo;
             _userManager = userManager;
         }
 
@@ -49,14 +51,15 @@ namespace CampusEats.Controllers
         }
 
         // GET: Rezervacija/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create(int? obrokId)
         {
             var model = new Rezervacija
             {
                 Datum = DateTime.Now,
                 Status = StatusRezervacije.Kreirana
             };
-            ViewData["ObrokId"] = new SelectList(HttpContext.RequestServices.GetRequiredService<CampusEats.Data.DataContext>().Obroci, "Id", "Naziv");
+            var obroci = await _obrokRepo.GetAllAsync();
+            ViewData["ObrokId"] = new SelectList(obroci, "Id", "Naziv", obrokId);
             return View(model);
         }
 
@@ -73,7 +76,8 @@ namespace CampusEats.Controllers
                 await _service.CreateReservationAsync(userId, rezervacija.ObrokId);
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ObrokId"] = new SelectList(HttpContext.RequestServices.GetRequiredService<CampusEats.Data.DataContext>().Obroci, "Id", "Naziv", rezervacija.ObrokId);
+            var obroci = await _obrokRepo.GetAllAsync();
+            ViewData["ObrokId"] = new SelectList(obroci, "Id", "Naziv", rezervacija.ObrokId);
             return View(rezervacija);
         }
 

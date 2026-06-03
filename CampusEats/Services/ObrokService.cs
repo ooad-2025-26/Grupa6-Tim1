@@ -39,14 +39,13 @@ namespace CampusEats.Services
             return await _repo.GetByIdAsync(id);
         }
 
-        // Simple category filtering by checking if Naziv or Opis contains category text.
+        // Category filtering using the Category property.
         public async Task<List<Obrok>> GetByCategoryAsync(string? category)
         {
             var all = await _repo.GetAllAsync();
-            if (string.IsNullOrWhiteSpace(category)) return all;
-            var cat = category.Trim().ToLowerInvariant();
-            return all.Where(o => (o.Naziv ?? string.Empty).ToLowerInvariant().Contains(cat)
-                              || (o.Opis ?? string.Empty).ToLowerInvariant().Contains(cat)).ToList();
+            if (string.IsNullOrWhiteSpace(category) || category == "All") return all;
+            var cat = category.Trim();
+            return all.Where(o => string.Equals(o.Category ?? "Meals", cat, System.StringComparison.OrdinalIgnoreCase)).ToList();
         }
 
         public async Task<bool> UpdateAsync(Obrok obrok)
