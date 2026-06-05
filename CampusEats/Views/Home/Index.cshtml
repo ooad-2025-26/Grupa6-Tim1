@@ -72,8 +72,8 @@ else
                 }
                 else if (User.IsInRole("Admin"))
                 {
-                    <a class="card" asp-controller="Account" asp-action="Index">User Management</a>
-                    <a class="card" asp-controller="Home" asp-action="Index">Role Management</a>
+                    <a class="card" asp-controller="Admin" asp-action="Users">User Management</a>
+                    <a class="card" asp-controller="Admin" asp-action="Roles">Role Management</a>
                     <a class="card" asp-controller="Obrok" asp-action="Index">Meals</a>
                     <a class="card" asp-controller="Meni" asp-action="Index">Menus</a>
                     <a class="card" asp-controller="Rezervacija" asp-action="Index">Reservations</a>

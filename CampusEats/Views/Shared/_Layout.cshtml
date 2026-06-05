@@ -50,9 +50,9 @@
                 }
                 else if (User.IsInRole("Admin"))
                 {
-                    <a asp-controller="Home" asp-action="Index">Dashboard</a>
-                    <a asp-controller="Account" asp-action="Index">Users</a> <!-- TODO: create Users management -->
-                    <a asp-controller="Home" asp-action="Index">Roles</a> <!-- TODO: create Roles management -->
+                    <a asp-controller="Admin" asp-action="Dashboard">Dashboard</a>
+                    <a asp-controller="Admin" asp-action="Users">Users</a>
+                    <a asp-controller="Admin" asp-action="Roles">Roles</a>
                     <a asp-controller="Obrok" asp-action="Index">Meals</a>
                     <a asp-controller="Meni" asp-action="Index">Menus</a>
                     <a asp-controller="Rezervacija" asp-action="Index">Reservations</a>

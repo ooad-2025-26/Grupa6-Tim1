@@ -98,7 +98,8 @@ namespace CampusEats.Controllers
             {
                 return Forbid();
             }
-            ViewData["ObrokId"] = new SelectList(HttpContext.RequestServices.GetRequiredService<CampusEats.Data.DataContext>().Obroci, "Id", "Naziv", rezervacija.ObrokId);
+            var obroci = await _obrokRepo.GetAllAsync();
+            ViewData["ObrokId"] = new SelectList(obroci, "Id", "Naziv", rezervacija.ObrokId);
             return View(rezervacija);
         }
 
@@ -129,7 +130,8 @@ namespace CampusEats.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ObrokId"] = new SelectList(HttpContext.RequestServices.GetRequiredService<CampusEats.Data.DataContext>().Obroci, "Id", "Naziv", rezervacija.ObrokId);
+            var obroci2 = await _obrokRepo.GetAllAsync();
+            ViewData["ObrokId"] = new SelectList(obroci2, "Id", "Naziv", rezervacija.ObrokId);
             return View(rezervacija);
         }
 
@@ -148,7 +150,8 @@ namespace CampusEats.Controllers
             }
 
             var userId = _userManager.GetUserId(User);
-            if (!User.IsInRole("Admin") && rezervacija.KorisnikId != userId)
+            var canManageAll = User.IsInRole("Admin") || User.IsInRole("Radnik");
+            if (!canManageAll && rezervacija.KorisnikId != userId)
             {
                 return Forbid();
             }
