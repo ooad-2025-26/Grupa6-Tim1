@@ -4,48 +4,67 @@
     ViewData["Title"] = "Daily Menu";
 }
 
-<link rel="stylesheet" href="~/css/home.css" />
+@section Styles {
+    <link rel="stylesheet" href="~/css/menu.css" />
+}
 
-<div class="container mt-4 bg-white p-4">
-    <h1 class="mb-3">Today’s Menu</h1>
+<div class="menu-wrapper">
+    <div class="menu-inner">
+        <div class="menu-header">
+            <div class="menu-title">
+                <div class="section-small">Daily Menu</div>
+                <h1>Today’s Menu</h1>
+            </div>
 
-    <div class="btn-group mb-3" role="group" aria-label="filters" id="filterGroup">
-        <button class="btn btn-outline-success filter-btn active" data-filter="All">All</button>
-        <button class="btn btn-outline-success filter-btn" data-filter="Warm Drinks">Warm Drinks</button>
-        <button class="btn btn-outline-success filter-btn" data-filter="Drinks">Drinks</button>
-        <button class="btn btn-outline-success filter-btn" data-filter="Meals">Meals</button>
-    </div>
+            <div class="menu-filters" id="filterGroup" role="toolbar" aria-label="filters">
+                <button class="filter-pill active" data-filter="All">All</button>
+                <button class="filter-pill" data-filter="Warm Drinks">Warm Drinks</button>
+                <button class="filter-pill" data-filter="Drinks">Drinks</button>
+                <button class="filter-pill" data-filter="Meals">Meals</button>
+            </div>
+        </div>
 
-    <div class="row" id="menuGrid">
-        @foreach (var item in Model)
-        {
-            <div class="col-12 col-md-6 col-lg-4 mb-4 menu-card" data-category="@item.Category">
-                <div class="card h-100">
-                    <img src="@(string.IsNullOrEmpty(item.ImageUrl) ? "https://images.unsplash.com/photo-1544025162-d76694265947" : item.ImageUrl)" class="card-img-top rounded" alt="@item.Naziv" style="height:200px;object-fit:cover;" />
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title">@item.Naziv</h5>
-                        <p class="card-text">@item.Opis</p>
-                        <div class="mt-auto d-flex justify-content-between align-items-center">
-                            <div class="price">@String.Format("{0:0.00} KM", item.Cijena)</div>
-                            @if (User.IsInRole("Student") && item.Dostupan)
+        <div class="menu-grid" id="menuGrid">
+            @foreach (var item in Model)
+            {
+                var imageUrl = string.IsNullOrEmpty(item.ImageUrl) ? 
+                    "https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=placeholder" : item.ImageUrl;
+                <div class="menu-card" data-category="@item.Category">
+                    <div class="menu-card-media">
+                        <img src="@imageUrl" alt="@item.Naziv" onerror="this.onerror=null;this.src='/images/food-placeholder.png';" />
+                    </div>
+                    <div class="menu-card-body">
+                        <div class="menu-card-title">@item.Naziv</div>
+                        <div class="menu-card-desc">@item.Opis</div>
+                        <div class="menu-card-footer">
+                            <div class="menu-price">@String.Format("{0:0.00} KM", item.Cijena)</div>
+                        @if (User.IsInRole("Student") && item.Dostupan)
                             {
-                                <a class="btn btn-success btn-sm" asp-controller="Rezervacija" asp-action="Create" asp-route-obrokId="@item.Id">Reserve</a>
+                                <button type="button" class="reserve-btn" 
+                                        data-id="@item.Id"
+                                        data-name="@item.Naziv"
+                                        data-description="@item.Opis"
+                                        data-ingredients="@item.Sastojci"
+                                        data-price="@item.Cijena"
+                                        data-image="@imageUrl">
+                                    Reserve
+                                </button>
                             }
                             else if (User.IsInRole("Radnik") || User.IsInRole("Admin"))
                             {
-                                <a class="btn btn-outline-secondary btn-sm" asp-controller="Obrok" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                                <a class="edit-btn" asp-controller="Obrok" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
                             }
                         </div>
                     </div>
                 </div>
-            </div>
-        }
+            }
+        </div>
     </div>
 </div>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const buttons = document.querySelectorAll('.filter-btn');
+        const buttons = document.querySelectorAll('.filter-pill');
         const cards = document.querySelectorAll('.menu-card');
 
         buttons.forEach(btn => {
@@ -64,4 +83,80 @@
             });
         });
     });
+</script>
+
+<!-- Meal preview modal (restored) -->
+<div class="meal-modal-backdrop" id="mealModalBackdrop" aria-hidden="true">
+    <div class="meal-modal" role="dialog" aria-modal="true" aria-labelledby="mealModalTitle">
+        <button class="meal-modal-close" id="mealModalClose" aria-label="Close">×</button>
+        <div class="meal-modal-image-wrap">
+            <img id="mealModalImage" src="" alt="Meal image" />
+        </div>
+        <div class="meal-modal-content">
+            <h2 id="mealModalTitle">Meal name</h2>
+            <div class="meal-modal-ingredients" id="mealModalIngredients"></div>
+            <p class="meal-modal-desc" id="mealModalDesc"></p>
+            <div class="meal-modal-price" id="mealModalPrice"></div>
+            <a id="mealModalConfirm" class="meal-modal-confirm" href="#">Meal available - reserve meal</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function () {
+        const backdrop = document.getElementById('mealModalBackdrop');
+        const closeBtn = document.getElementById('mealModalClose');
+        const confirmBtn = document.getElementById('mealModalConfirm');
+
+        function openModal(data) {
+            document.getElementById('mealModalImage').src = data.image;
+            document.getElementById('mealModalTitle').textContent = data.name;
+            document.getElementById('mealModalDesc').textContent = data.description;
+            document.getElementById('mealModalIngredients').textContent = data.ingredients || '';
+            document.getElementById('mealModalPrice').textContent = (parseFloat(data.price) || 0).toFixed(2) + ' KM';
+            // confirm button behaves as a link to the Create page with obrokId query parameter
+            if (confirmBtn) confirmBtn.href = '/Rezervacija/Create?obrokId=' + encodeURIComponent(data.id);
+            backdrop.classList.add('open');
+            backdrop.setAttribute('aria-hidden', 'false');
+            document.body.classList.add('modal-open');
+            // move focus to close button for accessibility
+            setTimeout(() => closeBtn.focus(), 50);
+        }
+
+        function closeModal() {
+            backdrop.classList.remove('open');
+            backdrop.setAttribute('aria-hidden', 'true');
+            document.body.classList.remove('modal-open');
+        }
+
+        // wire up reserve buttons
+        document.addEventListener('click', function (e) {
+            const btn = e.target.closest('.reserve-btn');
+            if (btn) {
+                const data = {
+                    id: btn.getAttribute('data-id'),
+                    name: btn.getAttribute('data-name'),
+                    description: btn.getAttribute('data-description'),
+                    ingredients: btn.getAttribute('data-ingredients'),
+                    price: btn.getAttribute('data-price'),
+                    image: btn.getAttribute('data-image')
+                };
+                openModal(data);
+                return;
+            }
+
+            // close when clicking backdrop outside modal
+            if (e.target === backdrop) {
+                closeModal();
+            }
+        });
+
+        closeBtn.addEventListener('click', closeModal);
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && backdrop.classList.contains('open')) {
+                closeModal();
+            }
+        });
+    })();
 </script>

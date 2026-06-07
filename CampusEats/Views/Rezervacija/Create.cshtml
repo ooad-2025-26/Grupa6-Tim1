@@ -1,40 +1,55 @@
 ﻿@model CampusEats.Models.Rezervacija
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Confirm Reservation";
 }
 
-<h1>Create</h1>
+@section Styles {
+    <link rel="stylesheet" href="~/css/menu.css" />
+}
 
-<h4>Rezervacija</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Datum" class="control-label"></label>
-                <input asp-for="Datum" class="form-control" />
-                <span asp-validation-for="Datum" class="text-danger"></span>
+@{
+    // Determine selected meal name from ViewData["ObrokId"] SelectList if available
+    var select = ViewData["ObrokId"] as Microsoft.AspNetCore.Mvc.Rendering.SelectList;
+    string mealName = null;
+    if (select != null)
+    {
+        var selected = select.Where(s => s.Value == (Model?.ObrokId.ToString() ?? "")).FirstOrDefault();
+        if (selected != null) mealName = selected.Text;
+    }
+}
+
+<div class="menu-wrapper">
+    <div class="menu-inner">
+        <div class="reservation-card">
+            <h1 class="reservation-title">Confirm Reservation</h1>
+            <div class="reservation-grid">
+                <div class="reservation-image">
+                    @{
+                        // attempt to display meal image if available via TempData or other; fallback to placeholder
+                        var obroci = ViewData["ObrokId"] as Microsoft.AspNetCore.Mvc.Rendering.SelectList;
+                    }
+                    <img src="/images/food-placeholder.png" alt="Meal image" />
+                </div>
+                <div class="reservation-info">
+                    <h2 class="meal-name">@(!string.IsNullOrEmpty(mealName) ? mealName : "Selected Meal")</h2>
+                    <div class="reservation-meta">
+                        <div><strong>Date:</strong> @Model?.Datum.ToString("g")</div>
+                        <div><strong>Status:</strong> @Model?.Status.ToString()</div>
+                    </div>
+
+                    <form asp-action="Create" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="ObrokId" value="@Model?.ObrokId" />
+                        <div class="form-actions">
+                            <button type="submit" class="reserve-btn">Confirm Reservation</button>
+                            <a class="btn btn-link" asp-controller="Obrok" asp-action="Index">Back to Menu</a>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="Status" class="control-label"></label>
-                <select asp-for="Status" class="form-control" asp-items="Html.GetEnumSelectList<CampusEats.Models.StatusRezervacije>()"></select>
-                <span asp-validation-for="Status" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ObrokId" class="control-label"></label>
-                <select asp-for="ObrokId" class ="form-control" asp-items="ViewBag.ObrokId"></select>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {
