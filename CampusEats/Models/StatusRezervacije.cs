@@ -2,9 +2,10 @@
 {
     public enum StatusRezervacije
     {
-        Kreirana,
-        Potvrdjena,
-        Preuzeta,
-        Oduzeta
+        Pending,
+        Confirmed,
+        Ready,
+        Delivered,
+        Cancelled
     }
 }

@@ -1,42 +1,44 @@
 ﻿@model CampusEats.Models.Rezervacija
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Edit Reservation";
 }
 
-<h1>Edit</h1>
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card reservation-card">
+                <div class="card-body">
+                    <h2 class="reservation-title">Edit Reservation</h2>
 
-<h4>Rezervacija</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="Datum" class="control-label"></label>
-                <input asp-for="Datum" class="form-control" />
-                <span asp-validation-for="Datum" class="text-danger"></span>
+                    <form asp-action="Edit" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="Id" />
+
+                        <div class="mb-3">
+                            <label class="form-label">Meal</label>
+                            <select asp-for="ObrokId" class="form-select" asp-items="ViewBag.ObrokId"></select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Date</label>
+                            <input asp-for="Datum" class="form-control" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Status</label>
+                            <select asp-for="Status" class="form-select" asp-items="Html.GetEnumSelectList<CampusEats.Models.StatusRezervacije>()"></select>
+                        </div>
+
+                        <div class="d-flex">
+                            <button type="submit" class="btn btn-success">Save Changes</button>
+                            <a asp-action="Index" class="btn btn-outline-secondary ms-2">Back to Reservations</a>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="Status" class="control-label"></label>
-                <select asp-for="Status" class="form-control" asp-items="Html.GetEnumSelectList<CampusEats.Models.StatusRezervacije>()"></select>
-                <span asp-validation-for="Status" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ObrokId" class="control-label"></label>
-                <select asp-for="ObrokId" class="form-control" asp-items="ViewBag.ObrokId"></select>
-                <span asp-validation-for="ObrokId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {

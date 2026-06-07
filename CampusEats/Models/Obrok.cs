@@ -8,7 +8,7 @@
         public string Naziv { get; set; } = string.Empty;
 
         [System.ComponentModel.DataAnnotations.Range(0.0, double.MaxValue)]
-        public double Cijena { get; set; }
+        public decimal? Cijena { get; set; }
 
         [System.ComponentModel.DataAnnotations.Required]
         public string Opis { get; set; } = string.Empty;

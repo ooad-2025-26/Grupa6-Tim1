@@ -1,53 +1,77 @@
-﻿@model IEnumerable<CampusEats.Models.Rezervacija>
+@model IEnumerable<CampusEats.Models.Rezervacija>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "My Reservations";
 }
 
-<h1>Index</h1>
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow-sm rounded">
+                <div class="card-body">
+                    <h1 class="h3 mb-3">My Reservations</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Datum)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Status)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Korisnik)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Obrok)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
+                    <div class="mb-3 text-end">
+                        <a asp-controller="Obrok" asp-action="Index" class="btn btn-outline-secondary">Back to Menu</a>
+                        <a asp-action="Create" class="btn btn-success ms-2">Reserve a Meal</a>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-borderless table-hover align-middle">
+                            <thead class="bg-white">
+                                <tr>
+                                    <th>Meal</th>
+                                    <th>Student</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th class="text-end">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
 @foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Datum)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Status)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Korisnik != null ? item.Korisnik.Email : string.Empty)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Obrok != null ? item.Obrok.Naziv : string.Empty)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
+                                <tr class="align-middle">
+                                    <td>@(item.Obrok?.Naziv ?? "Unknown")</td>
+                                    <td>@(item.Korisnik?.Email ?? "-")</td>
+                                    <td>@item.Datum.ToString("g")</td>
+                                    <td>
+                                        @item.Status
+
+                                        @if (User.IsInRole("Radnik") || User.IsInRole("Admin"))
+                                        {
+                                            <form asp-action="UpdateStatus" method="post" class="d-inline ms-2">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="@item.Id" />
+                                                <select name="status" class="form-select form-select-sm d-inline-block" style="width:auto; display:inline-block; vertical-align:middle;">
+                                                    @foreach (var s in Enum.GetValues(typeof(CampusEats.Models.StatusRezervacije)))
+                                                    {
+                                                        <option value="@s" @(s.Equals(item.Status) ? "selected" : "")>@s</option>
+                                                    }
+                                                </select>
+                                                <button type="submit" class="btn btn-sm btn-success ms-1">Update</button>
+                                            </form>
+                                        }
+                                    </td>
+                                    <td class="text-end">
+                                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary me-1">Details</a>
+
+                                        @if (User.IsInRole("Student") && item.Korisnik?.UserName == User.Identity.Name)
+                                        {
+                                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-success me-1">Edit Reservation</a>
+                                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Cancel Reservation</a>
+                                        }
+                                        else if (User.IsInRole("Radnik") || User.IsInRole("Admin"))
+                                        {
+                                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete Reservation</a>
+                                        }
+                                    </td>
+                                </tr>
 }
-    </tbody>
-</table>
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

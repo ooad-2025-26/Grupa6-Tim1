@@ -8,42 +8,32 @@
     <link rel="stylesheet" href="~/css/menu.css" />
 }
 
-@{
-    // Determine selected meal name from ViewData["ObrokId"] SelectList if available
-    var select = ViewData["ObrokId"] as Microsoft.AspNetCore.Mvc.Rendering.SelectList;
-    string mealName = null;
-    if (select != null)
-    {
-        var selected = select.Where(s => s.Value == (Model?.ObrokId.ToString() ?? "")).FirstOrDefault();
-        if (selected != null) mealName = selected.Text;
-    }
-}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card reservation-card">
+                <div class="card-body">
+                    <h1 class="reservation-title">Confirm Reservation</h1>
 
-<div class="menu-wrapper">
-    <div class="menu-inner">
-        <div class="reservation-card">
-            <h1 class="reservation-title">Confirm Reservation</h1>
-            <div class="reservation-grid">
-                <div class="reservation-image">
-                    @{
-                        // attempt to display meal image if available via TempData or other; fallback to placeholder
-                        var obroci = ViewData["ObrokId"] as Microsoft.AspNetCore.Mvc.Rendering.SelectList;
-                    }
-                    <img src="/images/food-placeholder.png" alt="Meal image" />
-                </div>
-                <div class="reservation-info">
-                    <h2 class="meal-name">@(!string.IsNullOrEmpty(mealName) ? mealName : "Selected Meal")</h2>
-                    <div class="reservation-meta">
-                        <div><strong>Date:</strong> @Model?.Datum.ToString("g")</div>
-                        <div><strong>Status:</strong> @Model?.Status.ToString()</div>
+                    <div class="d-flex gap-4 align-items-start mt-3">
+                        <div class="reservation-image">
+                            <img src="@(ViewData["SelectedMealImage"] as string ?? "/images/food-placeholder.png")" alt="Meal image" style="max-width:160px; border-radius:8px;" />
+                        </div>
+                        <div>
+                            <h2 class="meal-name">@(ViewData["SelectedMealName"] as string ?? "Selected Meal")</h2>
+
+                            <div class="mb-2"><strong>Date:</strong> @Model?.Datum.ToString("g")</div>
+                            <div class="mb-2"><strong>Status:</strong> @Model?.Status</div>
+                            <div class="mb-2"><strong>Price:</strong> @(Model.Obrok?.Cena.HasValue == true ? Model.Obrok.Cena.Value.ToString("C") : "-")</div>
+                        </div>
                     </div>
 
-                    <form asp-action="Create" method="post">
+                    <form asp-action="Create" method="post" class="mt-4">
                         @Html.AntiForgeryToken()
                         <input type="hidden" name="ObrokId" value="@Model?.ObrokId" />
                         <div class="form-actions">
-                            <button type="submit" class="reserve-btn">Confirm Reservation</button>
-                            <a class="btn btn-link" asp-controller="Obrok" asp-action="Index">Back to Menu</a>
+                            <button type="submit" class="btn btn-success">Confirm Reservation</button>
+                            <a asp-controller="Obrok" asp-action="Index" class="btn btn-outline-secondary ms-2">Back to Menu</a>
                         </div>
                     </form>
                 </div>

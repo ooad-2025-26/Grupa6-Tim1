@@ -65,5 +65,13 @@ namespace CampusEats.Services
             await _repo.UpdateAsync(rezervacija);
             return true;
         }
+
+        public async Task UpdateStatusAsync(int id, StatusRezervacije status)
+        {
+            var r = await _repo.GetByIdAsync(id);
+            if (r == null) return;
+            r.Status = status;
+            await _repo.UpdateAsync(r);
+        }
     }
 }
