@@ -2,6 +2,7 @@ using CampusEats.Data;
 using CampusEats.Models;
 using CampusEats.Repositories;
 using CampusEats.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -39,6 +40,12 @@ builder.Services
     .AddUserStore<CampusEatsUserStore>()
     .AddRoleStore<CampusEatsRoleStore>()
     .AddDefaultTokenProviders();
+builder.Services.AddAuthorization(options =>
+{
+    options.DefaultPolicy = new AuthorizationPolicyBuilder(IdentityConstants.ApplicationScheme)
+        .RequireAuthenticatedUser()
+        .Build();
+});
 
 var app = builder.Build();
 
