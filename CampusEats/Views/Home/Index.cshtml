@@ -9,7 +9,7 @@
         <p class="lead">Pregled menija, rezervacija obroka, QR preuzimanje i nadzor narudzbi u jednoj ASP.NET MVC aplikaciji.</p>
         <div class="hero-actions">
             <a class="btn btn-primary" asp-controller="Meniji" asp-action="Index">Pogledaj meni</a>
-            @if (SignInManager.IsSignedIn(User))
+            @if (User.IsInRole("Student") || User.IsInRole("Administrator"))
             {
                 <a class="btn btn-outline-light" asp-controller="Rezervacije" asp-action="Create">Rezervisi obrok</a>
             }
@@ -27,7 +27,7 @@
         <h2>Obroci i zalihe</h2>
         <p>Pregled dostupnih jela, cijena, sastojaka i raspolozivih kolicina.</p>
     </a>
-    @if (SignInManager.IsSignedIn(User))
+    @if (SignInManager.IsSignedIn(User) && !User.IsInRole("Kurir"))
     {
         <a class="feature-card" asp-controller="Rezervacije" asp-action="Index">
             <span>02</span>

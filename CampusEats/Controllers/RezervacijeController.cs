@@ -1,6 +1,7 @@
 using CampusEats.Models;
 using CampusEats.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -13,38 +14,76 @@ public class RezervacijeController : Controller
     private readonly IKorisnikService _korisnikService;
     private readonly IObrokService _obrokService;
     private readonly IRezervacijaService _rezervacijaService;
+    private readonly UserManager<Korisnik> _userManager;
 
     public RezervacijeController(
         IRezervacijaService rezervacijaService,
         IObrokService obrokService,
-        IKorisnikService korisnikService)
+        IKorisnikService korisnikService,
+        UserManager<Korisnik> userManager)
     {
         _rezervacijaService = rezervacijaService;
         _obrokService = obrokService;
         _korisnikService = korisnikService;
+        _userManager = userManager;
     }
 
     public async Task<IActionResult> Index()
     {
+        if (User.IsInRole("Kurir") && !User.IsInRole("Administrator"))
+        {
+            return RedirectToAction("Index", "Kurir");
+        }
+
+        if (User.IsInRole("Student"))
+        {
+            var korisnik = await _userManager.GetUserAsync(User);
+            return korisnik is null ? Challenge() : View(await _rezervacijaService.GetByKorisnikIdAsync(korisnik.Id));
+        }
+
         return View(await _rezervacijaService.GetAllAsync());
     }
 
     public async Task<IActionResult> Details(int? id)
     {
         var rezervacija = await _rezervacijaService.GetByIdWithDetailsAsync(id);
+        if (rezervacija is not null
+            && User.IsInRole("Student")
+            && int.TryParse(_userManager.GetUserId(User), out var studentId)
+            && rezervacija.KorisnikId != studentId)
+        {
+            return Forbid();
+        }
+
         return rezervacija is null ? NotFound() : View(rezervacija);
     }
 
+    [Authorize(Roles = "Student,Administrator")]
     public async Task<IActionResult> Create()
     {
+        var korisnik = await _userManager.GetUserAsync(User);
+        ViewBag.TrenutniStudent = korisnik;
         await PopuniListeAsync();
         return View(new Rezervacija());
     }
 
     [HttpPost]
+    [Authorize(Roles = "Student,Administrator")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create([Bind("KorisnikId,ObrokId,TerminPreuzimanja,NacinPreuzimanja")] Rezervacija rezervacija)
     {
+        if (User.IsInRole("Student") && !User.IsInRole("Administrator"))
+        {
+            var korisnik = await _userManager.GetUserAsync(User);
+            if (korisnik is null)
+            {
+                return Challenge();
+            }
+
+            rezervacija.KorisnikId = korisnik.Id;
+            ViewBag.TrenutniStudent = korisnik;
+        }
+
         if (!ModelState.IsValid)
         {
             await PopuniListeAsync();
@@ -56,6 +95,10 @@ public class RezervacijeController : Controller
         {
             ModelState.AddModelError(string.Empty, result.Error!);
             await PopuniListeAsync();
+            if (User.IsInRole("Student") && !User.IsInRole("Administrator"))
+            {
+                ViewBag.TrenutniStudent = await _userManager.GetUserAsync(User);
+            }
             return View(rezervacija);
         }
 

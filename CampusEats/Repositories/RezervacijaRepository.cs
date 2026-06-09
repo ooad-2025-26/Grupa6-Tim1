@@ -23,11 +23,23 @@ public class RezervacijaRepository : IRezervacijaRepository
             .ToListAsync();
     }
 
+    public Task<List<Rezervacija>> GetByKorisnikIdAsync(int korisnikId)
+    {
+        return _context.Rezervacije
+            .Include(rezervacija => rezervacija.Korisnik)
+            .Include(rezervacija => rezervacija.Obrok)
+            .Include(rezervacija => rezervacija.QRKod)
+            .Where(rezervacija => rezervacija.KorisnikId == korisnikId)
+            .OrderByDescending(rezervacija => rezervacija.Datum)
+            .ToListAsync();
+    }
+
     public Task<List<Rezervacija>> GetDeliveriesAsync()
     {
         return _context.Rezervacije
             .Include(rezervacija => rezervacija.Korisnik)
             .Include(rezervacija => rezervacija.Obrok)
+            .Include(rezervacija => rezervacija.QRKod)
             .Where(rezervacija => rezervacija.NacinPreuzimanja == NacinPreuzimanja.Dostava)
             .OrderBy(rezervacija => rezervacija.TerminPreuzimanja)
             .ToListAsync();

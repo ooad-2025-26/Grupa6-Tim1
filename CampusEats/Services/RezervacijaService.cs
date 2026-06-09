@@ -19,6 +19,11 @@ public class RezervacijaService : IRezervacijaService
         return _rezervacijaRepository.GetAllAsync();
     }
 
+    public Task<List<Rezervacija>> GetByKorisnikIdAsync(int korisnikId)
+    {
+        return _rezervacijaRepository.GetByKorisnikIdAsync(korisnikId);
+    }
+
     public Task<List<Rezervacija>> GetDeliveriesAsync()
     {
         return _rezervacijaRepository.GetDeliveriesAsync();

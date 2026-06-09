@@ -6,7 +6,11 @@
 
 <div class="page-heading">
     <p class="eyebrow">Dostava</p>
-    <h1>Dodijeljene narudžbe</h1>
+    <h1>Narudzbe za dostavu</h1>
+</div>
+
+<div class="toolbar mb-3">
+    <a class="btn btn-primary" asp-controller="QRCode" asp-action="Scan">Skeniraj QR narudzbe</a>
 </div>
 
 <table class="table app-table">
@@ -17,17 +21,37 @@
             <th>Obrok</th>
             <th>Termin</th>
             <th>Status</th>
+            <th>QR za studenta</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var rezervacija in Model)
         {
+            var kurirskiKod = rezervacija.QRKod is null
+                ? null
+                : $"KURIR:{rezervacija.Id}:{rezervacija.QRKod.Kod}";
+
             <tr>
                 <td>@rezervacija.Korisnik?.Ime @rezervacija.Korisnik?.Prezime</td>
                 <td>@rezervacija.Korisnik?.Adresa</td>
                 <td>@rezervacija.Obrok?.Naziv</td>
                 <td>@rezervacija.TerminPreuzimanja.ToString(@"hh\:mm")</td>
                 <td>@rezervacija.Status</td>
+                <td>
+                    @if (rezervacija.Status == StatusRezervacije.Preuzeta && kurirskiKod is not null)
+                    {
+                        <img class="qr-thumb" src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=@Uri.EscapeDataString(kurirskiKod)" alt="Kurirski QR kod" />
+                        <div class="muted">Student skenira ovaj kod.</div>
+                    }
+                    else if (rezervacija.Status == StatusRezervacije.Dostavljena)
+                    {
+                        <span>Dostavljeno</span>
+                    }
+                    else
+                    {
+                        <span class="muted">Prvo skeniraj QR narudzbe.</span>
+                    }
+                </td>
             </tr>
         }
     </tbody>

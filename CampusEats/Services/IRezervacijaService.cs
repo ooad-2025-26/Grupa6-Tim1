@@ -5,6 +5,7 @@ namespace CampusEats.Services;
 public interface IRezervacijaService
 {
     Task<List<Rezervacija>> GetAllAsync();
+    Task<List<Rezervacija>> GetByKorisnikIdAsync(int korisnikId);
     Task<List<Rezervacija>> GetDeliveriesAsync();
     Task<Rezervacija?> GetByIdAsync(int? id);
     Task<Rezervacija?> GetByIdWithDetailsAsync(int? id);

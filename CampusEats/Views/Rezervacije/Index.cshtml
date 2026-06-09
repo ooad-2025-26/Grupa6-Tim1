@@ -9,7 +9,10 @@
         <p class="eyebrow">Narudzbe</p>
         <h1>Rezervacije</h1>
     </div>
-    <a class="btn btn-primary" asp-action="Create">Nova rezervacija</a>
+    @if (User.IsInRole("Student") || User.IsInRole("Administrator"))
+    {
+        <a class="btn btn-primary" asp-action="Create">Nova rezervacija</a>
+    }
 </div>
 
 <table class="table app-table">
