@@ -39,6 +39,22 @@ public static class IdentitySeedData
         var existingUser = await userManager.FindByEmailAsync(email);
         if (existingUser is not null)
         {
+            existingUser.Ime = ime;
+            existingUser.Prezime = prezime;
+            existingUser.Uloga = uloga;
+            existingUser.BrojIndeksa = brojIndeksa;
+            existingUser.Telefon = telefon;
+            existingUser.PhoneNumber = telefon;
+            existingUser.Adresa = adresa;
+            await userManager.UpdateAsync(existingUser);
+
+            var currentRoles = await userManager.GetRolesAsync(existingUser);
+            if (currentRoles.Count > 0)
+            {
+                await userManager.RemoveFromRolesAsync(existingUser, currentRoles);
+            }
+
+            await userManager.AddToRoleAsync(existingUser, uloga.ToString());
             return;
         }
 
