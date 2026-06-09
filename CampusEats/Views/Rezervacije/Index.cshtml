@@ -1,0 +1,61 @@
+@model IEnumerable<Rezervacija>
+
+@{
+    ViewData["Title"] = "Rezervacije";
+}
+
+<div class="page-heading page-heading-row">
+    <div>
+        <p class="eyebrow">Narudzbe</p>
+        <h1>Rezervacije</h1>
+    </div>
+    <a class="btn btn-primary" asp-action="Create">Nova rezervacija</a>
+</div>
+
+<table class="table app-table">
+    <thead>
+        <tr>
+            <th>Student</th>
+            <th>Obrok</th>
+            <th>Termin</th>
+            <th>Nacin</th>
+            <th>Status</th>
+            <th>QR kod</th>
+            <th>Akcije</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var rezervacija in Model)
+        {
+            <tr>
+                <td>@rezervacija.Korisnik?.Ime @rezervacija.Korisnik?.Prezime</td>
+                <td>@rezervacija.Obrok?.Naziv</td>
+                <td>@rezervacija.TerminPreuzimanja.ToString(@"hh\:mm")</td>
+                <td>@rezervacija.NacinPreuzimanja</td>
+                <td><span class="status status-ok">@rezervacija.Status</span></td>
+                <td>
+                    @if (!string.IsNullOrWhiteSpace(rezervacija.QRKod?.Kod))
+                    {
+                        var qrUrl = $"https://api.qrserver.com/v1/create-qr-code/?size=96x96&data={Uri.EscapeDataString(rezervacija.QRKod.Kod)}";
+                        <img class="qr-thumb" src="@qrUrl" alt="QR kod za rezervaciju #@rezervacija.Id" />
+                    }
+                    else
+                    {
+                        <span>Nema QR koda</span>
+                    }
+                </td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@rezervacija.Id">Detalji</a>
+                    @if (User.IsInRole("Administrator") || User.IsInRole("RadnikMenze"))
+                    {
+                        <a asp-action="Edit" asp-route-id="@rezervacija.Id">Uredi</a>
+                    }
+                    @if (User.IsInRole("Administrator"))
+                    {
+                        <a asp-action="Delete" asp-route-id="@rezervacija.Id">Obrisi</a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

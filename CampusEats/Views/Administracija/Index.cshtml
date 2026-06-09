@@ -1,0 +1,27 @@
+@{
+    ViewData["Title"] = "Administracija";
+}
+
+<div class="page-heading">
+    <p class="eyebrow">Nadzor sistema</p>
+    <h1>Administracija</h1>
+</div>
+
+<section class="stats-grid">
+    <article>
+        <span>Korisnici</span>
+        <strong>@ViewBag.BrojKorisnika</strong>
+    </article>
+    <article>
+        <span>Obroci</span>
+        <strong>@ViewBag.BrojObroka</strong>
+    </article>
+    <article>
+        <span>Rezervacije</span>
+        <strong>@ViewBag.BrojRezervacija</strong>
+    </article>
+    <article>
+        <span>Aktivni obroci</span>
+        <strong>@ViewBag.BrojAktivnihObroka</strong>
+    </article>
+</section>

@@ -1,0 +1,54 @@
+@{
+    ViewData["Title"] = "CampusEats";
+}
+
+<section class="hero-panel">
+    <div>
+        <p class="eyebrow">Studentska menza</p>
+        <h1>CampusEats</h1>
+        <p class="lead">Pregled menija, rezervacija obroka, QR preuzimanje i nadzor narudzbi u jednoj ASP.NET MVC aplikaciji.</p>
+        <div class="hero-actions">
+            <a class="btn btn-primary" asp-controller="Meniji" asp-action="Index">Pogledaj meni</a>
+            @if (SignInManager.IsSignedIn(User))
+            {
+                <a class="btn btn-outline-light" asp-controller="Rezervacije" asp-action="Create">Rezervisi obrok</a>
+            }
+            else
+            {
+                <a class="btn btn-outline-light" asp-controller="Account" asp-action="Login">Prijavi se</a>
+            }
+        </div>
+    </div>
+</section>
+
+<section class="feature-grid">
+    <a class="feature-card" asp-controller="Obroci" asp-action="Index">
+        <span>01</span>
+        <h2>Obroci i zalihe</h2>
+        <p>Pregled dostupnih jela, cijena, sastojaka i raspolozivih kolicina.</p>
+    </a>
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <a class="feature-card" asp-controller="Rezervacije" asp-action="Index">
+            <span>02</span>
+            <h2>Rezervacije</h2>
+            <p>Historija rezervacija sa statusom, terminom i generisanim QR kodom.</p>
+        </a>
+    }
+    @if (User.IsInRole("Kurir") || User.IsInRole("Administrator"))
+    {
+        <a class="feature-card" asp-controller="Kurir" asp-action="Index">
+            <span>03</span>
+            <h2>Dostava</h2>
+            <p>Lista narudzbi koje su oznacene za dostavu i spremne za kurira.</p>
+        </a>
+    }
+    @if (User.IsInRole("Administrator"))
+    {
+        <a class="feature-card" asp-controller="Administracija" asp-action="Index">
+            <span>04</span>
+            <h2>Administracija</h2>
+            <p>Brzi pregled korisnika, obroka, rezervacija i aktivne ponude.</p>
+        </a>
+    }
+</section>

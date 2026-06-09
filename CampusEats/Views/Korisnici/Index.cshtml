@@ -1,0 +1,57 @@
+@model IEnumerable<Korisnik>
+
+@{
+    ViewData["Title"] = "Korisnici";
+}
+
+<div class="page-heading">
+    <p class="eyebrow">Uloge sistema</p>
+    <h1>Korisnici</h1>
+</div>
+
+@if (TempData["Poruka"] is not null)
+{
+    <div class="alert alert-success">@TempData["Poruka"]</div>
+}
+
+@if (TempData["Greska"] is not null)
+{
+    <div class="alert alert-danger">@TempData["Greska"]</div>
+}
+
+<table class="table app-table">
+    <thead>
+        <tr>
+            <th>Ime i prezime</th>
+            <th>Email</th>
+            <th>Uloga</th>
+            <th>Telefon</th>
+            <th>Adresa</th>
+            <th>Promjena uloge</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var korisnik in Model)
+        {
+            <tr>
+                <td>@korisnik.Ime @korisnik.Prezime</td>
+                <td>@korisnik.Email</td>
+                <td>@korisnik.Uloga</td>
+                <td>@korisnik.Telefon</td>
+                <td>@korisnik.Adresa</td>
+                <td>
+                    <form asp-action="PromijeniUlogu" method="post" class="role-form">
+                        <input type="hidden" name="id" value="@korisnik.Id" />
+                        <select name="uloga" class="form-select form-select-sm">
+                            @foreach (var uloga in Enum.GetValues<UlogaKorisnika>())
+                            {
+                                <option value="@uloga" selected="@(uloga == korisnik.Uloga)">@uloga</option>
+                            }
+                        </select>
+                        <button class="btn btn-primary btn-sm" type="submit">Sacuvaj</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

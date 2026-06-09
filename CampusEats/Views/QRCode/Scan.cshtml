@@ -1,0 +1,133 @@
+@{
+    ViewData["Title"] = "QR evidencija";
+    var rezervacija = ViewBag.Rezervacija as Rezervacija;
+}
+
+<div class="page-heading">
+    <p class="eyebrow">Vanjski uredjaj</p>
+    <h1>QR evidencija preuzimanja</h1>
+</div>
+
+@if (ViewBag.Poruka is not null)
+{
+    <div class="alert alert-success">@ViewBag.Poruka</div>
+}
+
+<section class="scan-layout">
+    <form asp-action="Scan" class="app-form">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <label for="kod">QR kod</label>
+        <input id="kod" name="kod" class="form-control" placeholder="Unesite ili skenirajte kod" />
+
+        <div class="scan-actions">
+            <button class="btn btn-outline-secondary" id="startScan" type="button">Pokreni kameru</button>
+            <button class="btn btn-outline-secondary" id="stopScan" type="button">Zaustavi</button>
+        </div>
+
+        <button class="btn btn-primary" type="submit">Evidentiraj</button>
+    </form>
+
+    <div class="camera-panel">
+        <video id="cameraPreview" autoplay muted playsinline></video>
+        <p class="muted" id="cameraStatus">Kamera ocitava QR kod kada je stranica otvorena preko HTTPS-a ili localhosta.</p>
+    </div>
+</section>
+
+@if (rezervacija is not null)
+{
+    <section class="details-panel mt-3">
+        <dl>
+            <dt>Student</dt>
+            <dd>@rezervacija.Korisnik?.Ime @rezervacija.Korisnik?.Prezime</dd>
+            <dt>Obrok</dt>
+            <dd>@rezervacija.Obrok?.Naziv</dd>
+            <dt>Status</dt>
+            <dd>@rezervacija.Status</dd>
+        </dl>
+    </section>
+}
+
+@section Scripts {
+    <script>
+        const video = document.getElementById("cameraPreview");
+        const kodInput = document.getElementById("kod");
+        const startButton = document.getElementById("startScan");
+        const stopButton = document.getElementById("stopScan");
+        const statusText = document.getElementById("cameraStatus");
+        let stream;
+        let detector;
+        let scanning = false;
+
+        function setStatus(message) {
+            if (statusText) {
+                statusText.textContent = message;
+            }
+        }
+
+        async function startScanner() {
+            if (!navigator.mediaDevices || !window.BarcodeDetector) {
+                setStatus("Browser ne podrzava direktno QR skeniranje. Koristite rucni unos QR koda.");
+                return;
+            }
+
+            detector = new BarcodeDetector({ formats: ["qr_code"] });
+            stream = await navigator.mediaDevices.getUserMedia({
+                video: { facingMode: "environment" },
+                audio: false
+            });
+            video.srcObject = stream;
+            scanning = true;
+            setStatus("Kamera je aktivna. Usmjerite QR kod prema kameri.");
+            scanFrame();
+        }
+
+        async function scanFrame() {
+            if (!scanning || !detector || !video) {
+                return;
+            }
+
+            if (video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
+                const codes = await detector.detect(video);
+                if (codes.length > 0) {
+                    kodInput.value = codes[0].rawValue;
+                    setStatus("QR kod je ocitan. Kliknite Evidentiraj za potvrdu.");
+                    stopScanner();
+                    return;
+                }
+            }
+
+            requestAnimationFrame(scanFrame);
+        }
+
+        function stopScanner() {
+            scanning = false;
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                stream = null;
+            }
+            if (video) {
+                video.srcObject = null;
+            }
+        }
+
+        startButton?.addEventListener("click", async () => {
+            try {
+                await startScanner();
+            } catch {
+                setStatus("Kamera nije dostupna. Provjerite dozvolu browsera i HTTPS.");
+            }
+        });
+
+        stopButton?.addEventListener("click", () => {
+            stopScanner();
+            setStatus("Kamera je zaustavljena.");
+        });
+
+        window.addEventListener("beforeunload", stopScanner);
+
+        if (!window.isSecureContext) {
+            setStatus("Za kameru je potreban HTTPS ili localhost. Online HTTP link dozvoljava samo rucni unos.");
+        }
+    </script>
+}
