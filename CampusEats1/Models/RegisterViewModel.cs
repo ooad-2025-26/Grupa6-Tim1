@@ -21,9 +21,6 @@ public class RegisterViewModel
     [StringLength(100, MinimumLength = 6)]
     public string Password { get; set; } = string.Empty;
 
-    [Required]
-    public UlogaKorisnika Uloga { get; set; } = UlogaKorisnika.Student;
-
     [StringLength(20)]
     public string? BrojIndeksa { get; set; }
 

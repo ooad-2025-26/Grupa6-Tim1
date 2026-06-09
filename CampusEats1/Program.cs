@@ -49,6 +49,8 @@ builder.Services.AddAuthorization(options =>
 
 var app = builder.Build();
 
+await IdentitySeedData.InitializeAsync(app.Services);
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {

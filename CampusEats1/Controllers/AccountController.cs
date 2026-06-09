@@ -65,7 +65,7 @@ public class AccountController : Controller
             EmailConfirmed = true,
             Ime = model.Ime,
             Prezime = model.Prezime,
-            Uloga = model.Uloga,
+            Uloga = UlogaKorisnika.Student,
             BrojIndeksa = model.BrojIndeksa,
             Telefon = model.Telefon,
             PhoneNumber = model.Telefon,
@@ -75,8 +75,8 @@ public class AccountController : Controller
         var result = await _userManager.CreateAsync(user, model.Password);
         if (result.Succeeded)
         {
-            await EnsureRoleExistsAsync(model.Uloga);
-            await _userManager.AddToRoleAsync(user, model.Uloga.ToString());
+            await EnsureRoleExistsAsync(UlogaKorisnika.Student);
+            await _userManager.AddToRoleAsync(user, UlogaKorisnika.Student.ToString());
             await _signInManager.SignInAsync(user, false);
             return RedirectToAction("Index", "Home");
         }

@@ -241,6 +241,17 @@ body {
   width: 100%;
 }
 
+.scan-actions,
+.role-form {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+}
+
+.role-form .form-select {
+  min-width: 150px;
+}
+
 @media (max-width: 640px) {
   .hero-panel {
     padding: 30px 22px;
