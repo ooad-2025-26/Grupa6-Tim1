@@ -1,9 +1,0 @@
-@model Meni
-
-<label asp-for="Datum"></label>
-<input asp-for="Datum" class="form-control" type="date" />
-<span asp-validation-for="Datum" class="text-danger"></span>
-
-<label asp-for="ObrokId">Obrok</label>
-<select asp-for="ObrokId" asp-items="ViewBag.ObrokId" class="form-select"></select>
-<span asp-validation-for="ObrokId" class="text-danger"></span>
