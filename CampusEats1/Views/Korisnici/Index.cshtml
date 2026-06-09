@@ -1,0 +1,34 @@
+@model IEnumerable<Korisnik>
+
+@{
+    ViewData["Title"] = "Korisnici";
+}
+
+<div class="page-heading">
+    <p class="eyebrow">Uloge sistema</p>
+    <h1>Korisnici</h1>
+</div>
+
+<table class="table app-table">
+    <thead>
+        <tr>
+            <th>Ime i prezime</th>
+            <th>Email</th>
+            <th>Uloga</th>
+            <th>Telefon</th>
+            <th>Adresa</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var korisnik in Model)
+        {
+            <tr>
+                <td>@korisnik.Ime @korisnik.Prezime</td>
+                <td>@korisnik.Email</td>
+                <td>@korisnik.Uloga</td>
+                <td>@korisnik.Telefon</td>
+                <td>@korisnik.Adresa</td>
+            </tr>
+        }
+    </tbody>
+</table>

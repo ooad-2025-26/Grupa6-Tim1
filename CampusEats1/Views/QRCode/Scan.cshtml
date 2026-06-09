@@ -1,0 +1,59 @@
+@{
+    ViewData["Title"] = "QR evidencija";
+    var rezervacija = ViewBag.Rezervacija as Rezervacija;
+}
+
+<div class="page-heading">
+    <p class="eyebrow">Vanjski uređaj</p>
+    <h1>QR evidencija preuzimanja</h1>
+</div>
+
+@if (ViewBag.Poruka is not null)
+{
+    <div class="alert alert-success">@ViewBag.Poruka</div>
+}
+
+<section class="scan-layout">
+    <form asp-action="Scan" class="app-form">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <label for="kod">QR kod</label>
+        <input id="kod" name="kod" class="form-control" placeholder="Unesite ili skenirajte kod" />
+
+        <button class="btn btn-primary" type="submit">Evidentiraj</button>
+    </form>
+
+    <div class="camera-panel">
+        <video id="cameraPreview" autoplay muted playsinline></video>
+        <p class="muted">Pregled kamere služi kao priprema za skeniranje QR koda preko uređaja.</p>
+    </div>
+</section>
+
+@if (rezervacija is not null)
+{
+    <section class="details-panel mt-3">
+        <dl>
+            <dt>Student</dt>
+            <dd>@rezervacija.Korisnik?.Ime @rezervacija.Korisnik?.Prezime</dd>
+            <dt>Obrok</dt>
+            <dd>@rezervacija.Obrok?.Naziv</dd>
+            <dt>Status</dt>
+            <dd>@rezervacija.Status</dd>
+        </dl>
+    </section>
+}
+
+@section Scripts {
+    <script>
+        const video = document.getElementById("cameraPreview");
+        if (navigator.mediaDevices && video) {
+            navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+                .then(stream => {
+                    video.srcObject = stream;
+                })
+                .catch(() => {
+                    video.replaceWith(document.createTextNode("Kamera nije dostupna u ovom browseru."));
+                });
+        }
+    </script>
+}

@@ -1,0 +1,30 @@
+@model Rezervacija
+
+@{
+    ViewData["Title"] = "Detalji rezervacije";
+}
+
+<div class="page-heading">
+    <p class="eyebrow">Detalji</p>
+    <h1>Rezervacija #@Model.Id</h1>
+</div>
+
+<section class="details-panel">
+    <dl>
+        <dt>Student</dt>
+        <dd>@Model.Korisnik?.Ime @Model.Korisnik?.Prezime</dd>
+        <dt>Obrok</dt>
+        <dd>@Model.Obrok?.Naziv</dd>
+        <dt>Datum</dt>
+        <dd>@Model.Datum.ToString("dd.MM.yyyy HH:mm")</dd>
+        <dt>Termin</dt>
+        <dd>@Model.TerminPreuzimanja.ToString(@"hh\:mm")</dd>
+        <dt>Način preuzimanja</dt>
+        <dd>@Model.NacinPreuzimanja</dd>
+        <dt>Status</dt>
+        <dd>@Model.Status</dd>
+        <dt>QR kod</dt>
+        <dd><code>@Model.QRKod?.Kod</code></dd>
+    </dl>
+    <a class="btn btn-outline-secondary" asp-action="Index">Nazad</a>
+</section>

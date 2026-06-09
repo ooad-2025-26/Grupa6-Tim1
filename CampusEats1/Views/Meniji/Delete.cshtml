@@ -1,0 +1,20 @@
+@model Meni
+
+@{
+    ViewData["Title"] = "Brisanje menija";
+}
+
+<div class="page-heading">
+    <p class="eyebrow">CRUD</p>
+    <h1>Obriši stavku menija</h1>
+</div>
+
+<section class="details-panel">
+    <p>Da li želite obrisati stavku menija za <strong>@Model.Datum.ToString("dd.MM.yyyy")</strong>?</p>
+    <p>Obrok: <strong>@Model.Obrok?.Naziv</strong></p>
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <button class="btn btn-danger" type="submit">Obriši</button>
+        <a class="btn btn-outline-secondary" asp-action="Index">Odustani</a>
+    </form>
+</section>
