@@ -1,0 +1,19 @@
+@model Obrok
+
+@{
+    ViewData["Title"] = "Brisanje obroka";
+}
+
+<div class="page-heading">
+    <p class="eyebrow">CRUD</p>
+    <h1>Obriši obrok</h1>
+</div>
+
+<section class="details-panel">
+    <p>Da li ste sigurni da želite obrisati obrok <strong>@Model.Naziv</strong>?</p>
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <button class="btn btn-danger" type="submit">Obriši</button>
+        <a class="btn btn-outline-secondary" asp-action="Index">Odustani</a>
+    </form>
+</section>

@@ -1,0 +1,32 @@
+@model IEnumerable<Obavijest>
+
+@{
+    ViewData["Title"] = "Obavijesti";
+}
+
+<div class="page-heading">
+    <p class="eyebrow">Status narudzbi</p>
+    <h1>Obavijesti</h1>
+</div>
+
+<table class="table app-table">
+    <thead>
+        <tr>
+            <th>Datum</th>
+            <th>Korisnik</th>
+            <th>Naslov</th>
+            <th>Poruka</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var obavijest in Model)
+        {
+            <tr>
+                <td>@obavijest.DatumSlanja.ToString("dd.MM.yyyy HH:mm")</td>
+                <td>@(obavijest.Korisnik?.Email ?? "-")</td>
+                <td>@obavijest.Naslov</td>
+                <td>@obavijest.Poruka</td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,32 @@
+@model IEnumerable<Obrok>
+
+@{
+    ViewData["Title"] = "Preporuke";
+}
+
+<div class="page-heading">
+    <p class="eyebrow">Personalizacija</p>
+    <h1>Preporuceni obroci</h1>
+</div>
+
+<div class="toolbar mb-3">
+    <a class="btn btn-outline-secondary" asp-controller="Preferencije" asp-action="Index">Uredi preferencije</a>
+</div>
+
+<section class="card-grid">
+    @foreach (var obrok in Model)
+    {
+        <article class="feature-card">
+            <span>@obrok.Cijena.ToString("0.00") KM</span>
+            <h2>@obrok.Naziv</h2>
+            <p>@obrok.Opis</p>
+            <p class="muted">@obrok.Sastojci</p>
+            <a asp-controller="Rezervacije" asp-action="Create">Rezervisi</a>
+        </article>
+    }
+</section>
+
+@if (!Model.Any())
+{
+    <p>Nema dostupnih preporuka prema trenutnim preferencijama.</p>
+}

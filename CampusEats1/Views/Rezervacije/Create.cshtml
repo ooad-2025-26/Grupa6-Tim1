@@ -1,0 +1,42 @@
+@model Rezervacija
+
+@{
+    ViewData["Title"] = "Nova rezervacija";
+    var trenutniStudent = ViewBag.TrenutniStudent as Korisnik;
+}
+
+<div class="page-heading">
+    <p class="eyebrow">Rezervacija obroka</p>
+    <h1>Nova rezervacija</h1>
+</div>
+
+<form asp-action="Create" class="app-form">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    @if (User.IsInRole("Administrator"))
+    {
+        <label asp-for="KorisnikId">Student</label>
+        <select asp-for="KorisnikId" asp-items="ViewBag.KorisnikId" class="form-select"></select>
+    }
+    else
+    {
+        <input type="hidden" asp-for="KorisnikId" value="@trenutniStudent?.Id" />
+        <label>Student</label>
+        <input class="form-control" value="@trenutniStudent?.Ime @trenutniStudent?.Prezime (@trenutniStudent?.Email)" readonly />
+    }
+
+    <label asp-for="ObrokId">Obrok</label>
+    <select asp-for="ObrokId" asp-items="ViewBag.ObrokId" class="form-select"></select>
+
+    <label asp-for="TerminPreuzimanja">Termin preuzimanja</label>
+    <input asp-for="TerminPreuzimanja" class="form-control" type="time" />
+
+    <label asp-for="NacinPreuzimanja">Nacin preuzimanja</label>
+    <select asp-for="NacinPreuzimanja" asp-items="Html.GetEnumSelectList<NacinPreuzimanja>()" class="form-select"></select>
+
+    <button class="btn btn-primary" type="submit">Sacuvaj rezervaciju</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

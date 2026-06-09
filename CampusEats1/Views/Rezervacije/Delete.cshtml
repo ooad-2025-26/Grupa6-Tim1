@@ -1,0 +1,20 @@
+@model Rezervacija
+
+@{
+    ViewData["Title"] = "Brisanje rezervacije";
+}
+
+<div class="page-heading">
+    <p class="eyebrow">CRUD</p>
+    <h1>Obriši rezervaciju</h1>
+</div>
+
+<section class="details-panel">
+    <p>Da li želite obrisati rezervaciju za <strong>@Model.Korisnik?.Ime @Model.Korisnik?.Prezime</strong>?</p>
+    <p>Obrok: <strong>@Model.Obrok?.Naziv</strong></p>
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <button class="btn btn-danger" type="submit">Obriši</button>
+        <a class="btn btn-outline-secondary" asp-action="Index">Odustani</a>
+    </form>
+</section>

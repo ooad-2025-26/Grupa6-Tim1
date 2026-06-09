@@ -1,0 +1,106 @@
+@model CampusEats.Services.AdministracijaPregled
+
+@{
+    ViewData["Title"] = "Administracija";
+}
+
+<div class="page-heading">
+    <p class="eyebrow">Nadzor sistema</p>
+    <h1>Administracija</h1>
+</div>
+
+<section class="stats-grid">
+    <article>
+        <span>Korisnici</span>
+        <strong>@Model.Statistika.BrojKorisnika</strong>
+    </article>
+    <article>
+        <span>Obroci</span>
+        <strong>@Model.Statistika.BrojObroka</strong>
+    </article>
+    <article>
+        <span>Rezervacije</span>
+        <strong>@Model.Statistika.BrojRezervacija</strong>
+    </article>
+    <article>
+        <span>Aktivni obroci</span>
+        <strong>@Model.Statistika.BrojAktivnihObroka</strong>
+    </article>
+</section>
+
+<section class="details-panel mt-3">
+    <h2>Najnovije aktivnosti</h2>
+    <table class="table app-table">
+        <thead>
+            <tr>
+                <th>Vrijeme</th>
+                <th>Korisnik</th>
+                <th>Akcija</th>
+                <th>Opis</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var aktivnost in Model.Aktivnosti)
+            {
+                <tr>
+                    <td>@aktivnost.Vrijeme.ToString("dd.MM.yyyy HH:mm")</td>
+                    <td>@(aktivnost.KorisnikEmail ?? "-")</td>
+                    <td>@aktivnost.Akcija</td>
+                    <td>@aktivnost.Opis</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</section>
+
+<section class="details-panel mt-3">
+    <h2>Poslane obavijesti</h2>
+    <table class="table app-table">
+        <thead>
+            <tr>
+                <th>Vrijeme</th>
+                <th>Korisnik</th>
+                <th>Naslov</th>
+                <th>Poruka</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var obavijest in Model.Obavijesti)
+            {
+                <tr>
+                    <td>@obavijest.DatumSlanja.ToString("dd.MM.yyyy HH:mm")</td>
+                    <td>@(obavijest.Korisnik?.Email ?? "-")</td>
+                    <td>@obavijest.Naslov</td>
+                    <td>@obavijest.Poruka</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</section>
+
+<section class="details-panel mt-3">
+    <h2>Historija izmjena menija i zaliha</h2>
+    <table class="table app-table">
+        <thead>
+            <tr>
+                <th>Vrijeme</th>
+                <th>Korisnik</th>
+                <th>Entitet</th>
+                <th>Izmjena</th>
+                <th>Opis</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var izmjena in Model.HistorijaIzmjena)
+            {
+                <tr>
+                    <td>@izmjena.Vrijeme.ToString("dd.MM.yyyy HH:mm")</td>
+                    <td>@(izmjena.KorisnikEmail ?? "-")</td>
+                    <td>@izmjena.Entitet #@izmjena.EntitetId</td>
+                    <td>@izmjena.TipIzmjene</td>
+                    <td>@izmjena.Opis</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</section>

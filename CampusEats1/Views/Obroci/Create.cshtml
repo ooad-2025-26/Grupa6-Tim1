@@ -1,0 +1,21 @@
+@model Obrok
+
+@{
+    ViewData["Title"] = "Dodaj obrok";
+}
+
+<div class="page-heading">
+    <p class="eyebrow">CRUD</p>
+    <h1>Dodaj obrok</h1>
+</div>
+
+<form asp-action="Create" class="app-form">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <partial name="_ObrokForm" model="Model" />
+    <button class="btn btn-primary" type="submit">Sačuvaj</button>
+    <a class="btn btn-outline-secondary" asp-action="Index">Nazad</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

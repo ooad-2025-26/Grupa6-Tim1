@@ -1,0 +1,26 @@
+@model Obrok
+
+@{
+    ViewData["Title"] = "Detalji obroka";
+}
+
+<div class="page-heading">
+    <p class="eyebrow">Detalji</p>
+    <h1>@Model.Naziv</h1>
+</div>
+
+<section class="details-panel">
+    <dl>
+        <dt>Cijena</dt>
+        <dd>@Model.Cijena.ToString("0.00") KM</dd>
+        <dt>Opis</dt>
+        <dd>@Model.Opis</dd>
+        <dt>Sastojci</dt>
+        <dd>@Model.Sastojci</dd>
+        <dt>Količina</dt>
+        <dd>@Model.Kolicina</dd>
+        <dt>Dostupan</dt>
+        <dd>@(Model.Dostupan ? "Da" : "Ne")</dd>
+    </dl>
+    <a class="btn btn-outline-secondary" asp-action="Index">Nazad</a>
+</section>

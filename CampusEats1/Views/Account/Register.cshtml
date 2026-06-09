@@ -1,0 +1,45 @@
+@model RegisterViewModel
+
+@{
+    ViewData["Title"] = "Registracija";
+}
+
+<div class="page-heading">
+    <p class="eyebrow">Identity</p>
+    <h1>Registracija korisnika</h1>
+</div>
+
+<form asp-action="Register" class="app-form">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <label asp-for="Ime"></label>
+    <input asp-for="Ime" class="form-control" />
+    <span asp-validation-for="Ime" class="text-danger"></span>
+
+    <label asp-for="Prezime"></label>
+    <input asp-for="Prezime" class="form-control" />
+    <span asp-validation-for="Prezime" class="text-danger"></span>
+
+    <label asp-for="Email"></label>
+    <input asp-for="Email" class="form-control" />
+    <span asp-validation-for="Email" class="text-danger"></span>
+
+    <label asp-for="Password">Lozinka</label>
+    <input asp-for="Password" class="form-control" />
+    <span asp-validation-for="Password" class="text-danger"></span>
+
+    <label asp-for="BrojIndeksa">Broj indeksa</label>
+    <input asp-for="BrojIndeksa" class="form-control" />
+
+    <label asp-for="Telefon"></label>
+    <input asp-for="Telefon" class="form-control" />
+
+    <label asp-for="Adresa"></label>
+    <input asp-for="Adresa" class="form-control" />
+
+    <button class="btn btn-primary" type="submit">Registruj se</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

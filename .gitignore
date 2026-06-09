@@ -1,0 +1,13 @@
+.vs/
+bin/
+obj/
+**/bin/
+**/obj/
+**/.vs/
+**/*.user
+**/*.suo
+*.zip
+publish/
+__extract_*/
+__extract_*/*
+__campus_working_*.zip

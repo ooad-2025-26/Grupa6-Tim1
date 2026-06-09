@@ -1,0 +1,26 @@
+@model Obrok
+
+<label asp-for="Naziv"></label>
+<input asp-for="Naziv" class="form-control" />
+<span asp-validation-for="Naziv" class="text-danger"></span>
+
+<label asp-for="Cijena"></label>
+<input asp-for="Cijena" class="form-control" />
+<span asp-validation-for="Cijena" class="text-danger"></span>
+
+<label asp-for="Opis"></label>
+<textarea asp-for="Opis" class="form-control"></textarea>
+<span asp-validation-for="Opis" class="text-danger"></span>
+
+<label asp-for="Sastojci"></label>
+<textarea asp-for="Sastojci" class="form-control"></textarea>
+<span asp-validation-for="Sastojci" class="text-danger"></span>
+
+<label asp-for="Kolicina">Količina</label>
+<input asp-for="Kolicina" class="form-control" />
+<span asp-validation-for="Kolicina" class="text-danger"></span>
+
+<label class="form-check">
+    <input asp-for="Dostupan" class="form-check-input" />
+    <span class="form-check-label">Dostupan</span>
+</label>

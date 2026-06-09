@@ -1,0 +1,30 @@
+@model Korisnik
+
+@{
+    ViewData["Title"] = "Preferencije";
+}
+
+<div class="page-heading">
+    <p class="eyebrow">Profil studenta</p>
+    <h1>Prehrambene preferencije</h1>
+</div>
+
+@if (TempData["Poruka"] is not null)
+{
+    <div class="alert alert-success">@TempData["Poruka"]</div>
+}
+
+<form asp-action="Index" class="app-form">
+    <label asp-for="Alergije">Alergije</label>
+    <input asp-for="Alergije" class="form-control" placeholder="Npr. kikiriki, gluten" />
+
+    <label asp-for="OmiljenaHrana">Omiljena hrana</label>
+    <input asp-for="OmiljenaHrana" class="form-control" placeholder="Npr. pasta, piletina, povrce" />
+
+    <label class="form-check">
+        <input asp-for="Vegetarijanac" class="form-check-input" />
+        <span class="form-check-label">Vegetarijanska ishrana</span>
+    </label>
+
+    <button class="btn btn-primary" type="submit">Sacuvaj preferencije</button>
+</form>
