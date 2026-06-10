@@ -18,8 +18,12 @@
         <tr>
             <th>Datum</th>
             <th>Obrok</th>
+            <th>Opis</th>
             <th>Cijena</th>
-            <th>Dostupnost</th>
+            @if (User.IsInRole("Administrator") || User.IsInRole("RadnikMenze"))
+            {
+                <th>Dostupnost</th>
+            }
             <th>Akcije</th>
         </tr>
     </thead>
@@ -29,8 +33,12 @@
             <tr>
                 <td>@meni.Datum.ToString("dd.MM.yyyy")</td>
                 <td>@meni.Obrok?.Naziv</td>
+                <td>@meni.Obrok?.Opis</td>
                 <td>@meni.Obrok?.Cijena.ToString("0.00") KM</td>
-                <td>@(meni.Obrok?.Dostupan == true ? "Dostupno" : "Nedostupno")</td>
+                @if (User.IsInRole("Administrator") || User.IsInRole("RadnikMenze"))
+                {
+                    <td>@(meni.Obrok?.Dostupan == true && meni.Obrok.Kolicina > 0 ? "Dostupno" : "Nedostupno")</td>
+                }
                 <td>
                     <a asp-action="Details" asp-route-id="@meni.Id">Detalji</a>
                     @if (User.IsInRole("Administrator") || User.IsInRole("RadnikMenze"))

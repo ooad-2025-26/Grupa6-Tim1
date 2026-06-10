@@ -43,8 +43,26 @@
                 <td>
                     @if (rezervacija.Status == StatusRezervacije.Preuzeta && kurirskiKod is not null)
                     {
-                        <img class="qr-thumb" src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=@Uri.EscapeDataString(kurirskiKod)" alt="Kurirski QR kod" />
-                        <div class="muted">Student skenira ovaj kod.</div>
+                        var velikiQrUrl = $"https://api.qrserver.com/v1/create-qr-code/?size=420x420&data={Uri.EscapeDataString(kurirskiKod)}";
+                        <button class="btn btn-sm btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#qrModal-@rezervacija.Id">
+                            Prikazi QR kod
+                        </button>
+                        <div class="muted">Student skenira kod iz velikog prikaza.</div>
+
+                        <div class="modal fade" id="qrModal-@rezervacija.Id" tabindex="-1" aria-labelledby="qrModalLabel-@rezervacija.Id" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h2 class="modal-title fs-5" id="qrModalLabel-@rezervacija.Id">QR kod za studenta</h2>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Zatvori"></button>
+                                    </div>
+                                    <div class="modal-body text-center">
+                                        <img class="qr-large" src="@velikiQrUrl" alt="Kurirski QR kod za rezervaciju #@rezervacija.Id" />
+                                        <p class="mt-3 mb-0">Student skenira ovaj QR kod kada mu se narudzba dostavi.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     }
                     else if (rezervacija.Status == StatusRezervacije.Dostavljena)
                     {

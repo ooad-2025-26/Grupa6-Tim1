@@ -20,7 +20,11 @@ public class MenijiController : Controller
 
     public async Task<IActionResult> Index()
     {
-        return View(await _meniService.GetAllAsync());
+        var meniji = User.IsInRole("Administrator") || User.IsInRole("RadnikMenze")
+            ? await _meniService.GetAllAsync()
+            : await _meniService.GetVisibleAsync();
+
+        return View(meniji);
     }
 
     public async Task<IActionResult> Details(int? id)
@@ -115,6 +119,6 @@ public class MenijiController : Controller
 
     private async Task PopuniObrokeAsync(int? selectedId = null)
     {
-        ViewBag.ObrokId = new SelectList(await _obrokService.GetAllAsync(), "Id", "Naziv", selectedId);
+        ViewBag.ObrokId = new SelectList(await _obrokService.GetAvailableAsync(), "Id", "Naziv", selectedId);
     }
 }

@@ -70,6 +70,22 @@ body {
   margin-top: 24px;
 }
 
+.hero-highlights {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 28px;
+}
+
+.hero-highlights span {
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 999px;
+  color: #ffffff;
+  font-weight: 700;
+  padding: 8px 12px;
+}
+
 .eyebrow {
   color: #2f7d5b;
   font-size: 0.78rem;
@@ -81,6 +97,76 @@ body {
 
 .hero-panel .eyebrow {
   color: #dcefe5;
+}
+
+.home-section {
+  margin-top: 34px;
+}
+
+.section-heading {
+  max-width: 760px;
+}
+
+.section-heading h2,
+.benefits-band h2 {
+  font-size: 1.65rem;
+  font-weight: 800;
+  margin: 0;
+}
+
+.steps-grid {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  margin-top: 18px;
+}
+
+.steps-grid article {
+  background: #ffffff;
+  border: 1px solid #dde5dc;
+  border-radius: 8px;
+  padding: 24px;
+}
+
+.steps-grid span {
+  align-items: center;
+  background: #1f7a4d;
+  border-radius: 999px;
+  color: #ffffff;
+  display: inline-flex;
+  font-weight: 800;
+  height: 34px;
+  justify-content: center;
+  margin-bottom: 14px;
+  width: 34px;
+}
+
+.steps-grid h3 {
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+.benefits-band {
+  align-items: start;
+  background: #ffffff;
+  border: 1px solid #dde5dc;
+  border-radius: 8px;
+  display: grid;
+  gap: 24px;
+  grid-template-columns: minmax(240px, 0.8fr) 1.2fr;
+  padding: 28px;
+}
+
+.benefits-list {
+  display: grid;
+  gap: 10px;
+}
+
+.benefits-list span {
+  background: #f3f8f5;
+  border-left: 4px solid #1f7a4d;
+  border-radius: 6px;
+  padding: 12px 14px;
 }
 
 .feature-grid,
@@ -217,6 +303,27 @@ body {
   margin: 0;
 }
 
+.status-result {
+  align-items: center;
+  background: #e8f5ee;
+  border: 1px solid #b8dfc8;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 18px;
+  padding: 14px 16px;
+}
+
+.status-result strong {
+  color: #087a3d;
+  font-size: 1.25rem;
+}
+
+.status-label {
+  color: #52635a;
+  font-weight: 700;
+}
+
 .action-links {
   display: flex;
   gap: 12px;
@@ -239,6 +346,14 @@ body {
   border-radius: 8px;
   display: block;
   width: 100%;
+}
+
+.qr-large {
+  height: min(70vw, 420px);
+  image-rendering: pixelated;
+  max-height: 420px;
+  max-width: 100%;
+  width: min(70vw, 420px);
 }
 
 .scan-actions,
@@ -304,7 +419,8 @@ body {
   }
 
   .scan-layout,
-  .details-panel dl {
+  .details-panel dl,
+  .benefits-band {
     grid-template-columns: 1fr;
   }
 }

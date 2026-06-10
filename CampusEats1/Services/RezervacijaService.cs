@@ -68,6 +68,21 @@ public class RezervacijaService : IRezervacijaService
             rezervacija.Id,
             "Rezervacija potvrdjena",
             $"Vasa rezervacija #{rezervacija.Id} je potvrdjena.");
+        await _obavijestService.KreirajZaUloguAsync(
+            UlogaKorisnika.RadnikMenze,
+            rezervacija.Id,
+            "Nova narudzba",
+            $"Kreirana je nova rezervacija #{rezervacija.Id}.");
+
+        if (rezervacija.NacinPreuzimanja == NacinPreuzimanja.Dostava)
+        {
+            await _obavijestService.KreirajZaUloguAsync(
+                UlogaKorisnika.Kurir,
+                rezervacija.Id,
+                "Nova dostavna narudzba",
+                $"Rezervacija #{rezervacija.Id} ceka kurira.");
+        }
+
         await _aktivnostLogService.ZabiljeziAsync("Kreiranje rezervacije", nameof(Rezervacija), rezervacija.Id, $"Kreirana rezervacija #{rezervacija.Id}.");
         return (true, null);
     }
@@ -99,6 +114,27 @@ public class RezervacijaService : IRezervacijaService
             rezervacija.Id,
             "Promjena statusa",
             $"Status rezervacije #{rezervacija.Id} je promijenjen u {status}.");
+
+        if (status == StatusRezervacije.Spremna && rezervacija.NacinPreuzimanja == NacinPreuzimanja.Dostava)
+        {
+            if (rezervacija.KurirId is not null)
+            {
+                await _obavijestService.KreirajAsync(
+                    rezervacija.KurirId,
+                    rezervacija.Id,
+                    "Narudzba spremna",
+                    $"Rezervacija #{rezervacija.Id} je spremna za dostavu.");
+            }
+            else
+            {
+                await _obavijestService.KreirajZaUloguAsync(
+                    UlogaKorisnika.Kurir,
+                    rezervacija.Id,
+                    "Narudzba spremna",
+                    $"Rezervacija #{rezervacija.Id} je spremna za preuzimanje kurira.");
+            }
+        }
+
         await _aktivnostLogService.ZabiljeziAsync("Promjena statusa", nameof(Rezervacija), rezervacija.Id, $"Status rezervacije promijenjen u {status}.");
         return true;
     }
@@ -124,6 +160,11 @@ public class RezervacijaService : IRezervacijaService
             rezervacija.Id,
             "Kurir dodijeljen",
             $"Kurir je preuzeo obradu rezervacije #{rezervacija.Id}.");
+        await _obavijestService.KreirajAsync(
+            kurirId,
+            rezervacija.Id,
+            "Dostava preuzeta",
+            $"Preuzeli ste rezervaciju #{rezervacija.Id} za dostavu.");
         await _aktivnostLogService.ZabiljeziAsync("Dodjela kuriru", nameof(Rezervacija), rezervacija.Id, $"Rezervacija dodijeljena kuriru #{kurirId}.");
         return true;
     }

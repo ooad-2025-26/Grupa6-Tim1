@@ -28,6 +28,7 @@
             <th>Telefon</th>
             <th>Adresa</th>
             <th>Promjena uloge</th>
+            <th>Brisanje</th>
         </tr>
     </thead>
     <tbody>
@@ -50,6 +51,19 @@
                         </select>
                         <button class="btn btn-primary btn-sm" type="submit">Sacuvaj</button>
                     </form>
+                </td>
+                <td>
+                    @if (korisnik.Email != User.Identity?.Name)
+                    {
+                        <form asp-action="Obrisi" method="post" onsubmit="return confirm('Obrisati korisnika @korisnik.Email?');">
+                            <input type="hidden" name="id" value="@korisnik.Id" />
+                            <button class="btn btn-danger btn-sm" type="submit">Obrisi</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <span class="text-muted">Vlastiti nalog</span>
+                    }
                 </td>
             </tr>
         }

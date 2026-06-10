@@ -26,9 +26,12 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Meniji" asp-action="Index">Meni</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Obroci" asp-action="Index">Obroci</a>
-                        </li>
+                            @if (User.IsInRole("Administrator") || User.IsInRole("RadnikMenze"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Obroci" asp-action="Index">Obroci</a>
+                            </li>
+                        }
                         @if (SignInManager.IsSignedIn(User) && !User.IsInRole("Kurir"))
                         {
                             <li class="nav-item">
@@ -59,7 +62,7 @@
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Kurir" asp-action="Index">Kurir</a>
                             </li>
                         }
-                        @if (User.IsInRole("Student") || User.IsInRole("RadnikMenze") || User.IsInRole("Administrator"))
+                        @if (User.IsInRole("Student") || User.IsInRole("RadnikMenze") || User.IsInRole("Kurir") || User.IsInRole("Administrator"))
                         {
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="QRCode" asp-action="Scan">QR evidencija</a>

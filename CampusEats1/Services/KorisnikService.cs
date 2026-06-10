@@ -22,6 +22,11 @@ public class KorisnikService : IKorisnikService
         return _korisnikRepository.GetStudentsAsync();
     }
 
+    public Task<bool> HasReservationsOrDeliveriesAsync(int korisnikId)
+    {
+        return _korisnikRepository.HasReservationsOrDeliveriesAsync(korisnikId);
+    }
+
     public Task<int> CountAsync()
     {
         return _korisnikRepository.CountAsync();

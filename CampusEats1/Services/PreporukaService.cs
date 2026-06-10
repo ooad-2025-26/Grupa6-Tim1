@@ -22,8 +22,11 @@ public class PreporukaService : IPreporukaService
             return [];
         }
 
-        var obroci = await _context.Obroci
-            .Where(obrok => obrok.Dostupan && obrok.Kolicina > 0)
+        var obroci = await _context.Meniji
+            .Include(meni => meni.Obrok)
+            .Where(meni => meni.Obrok != null && meni.Obrok.Dostupan && meni.Obrok.Kolicina > 0)
+            .Select(meni => meni.Obrok!)
+            .Distinct()
             .ToListAsync();
 
         var prethodniObrokIds = await _context.Rezervacije

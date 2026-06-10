@@ -21,6 +21,27 @@ public class MeniRepository : IMeniRepository
             .ToListAsync();
     }
 
+    public Task<List<Meni>> GetVisibleAsync()
+    {
+        return _context.Meniji
+            .Include(meni => meni.Obrok)
+            .Where(meni => meni.Obrok != null && meni.Obrok.Dostupan && meni.Obrok.Kolicina > 0)
+            .OrderBy(meni => meni.Datum)
+            .ThenBy(meni => meni.Obrok!.Naziv)
+            .ToListAsync();
+    }
+
+    public Task<List<Obrok>> GetAvailableMenuObrociAsync()
+    {
+        return _context.Meniji
+            .Include(meni => meni.Obrok)
+            .Where(meni => meni.Obrok != null && meni.Obrok.Dostupan && meni.Obrok.Kolicina > 0)
+            .Select(meni => meni.Obrok!)
+            .Distinct()
+            .OrderBy(obrok => obrok.Naziv)
+            .ToListAsync();
+    }
+
     public Task<Meni?> GetByIdAsync(int id)
     {
         return _context.Meniji.FirstOrDefaultAsync(meni => meni.Id == id);

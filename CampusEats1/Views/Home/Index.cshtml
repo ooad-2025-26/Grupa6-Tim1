@@ -6,7 +6,7 @@
     <div>
         <p class="eyebrow">Studentska menza</p>
         <h1>CampusEats</h1>
-        <p class="lead">Pregled menija, rezervacija obroka, QR preuzimanje i nadzor narudzbi u jednoj ASP.NET MVC aplikaciji.</p>
+        <p class="lead">Brza rezervacija obroka, pregled dnevnog menija i sigurno QR preuzimanje za studente, radnike menze i kurire.</p>
         <div class="hero-actions">
             <a class="btn btn-primary" asp-controller="Meniji" asp-action="Index">Pogledaj meni</a>
             @if (User.IsInRole("Student") || User.IsInRole("Administrator"))
@@ -18,19 +18,69 @@
                 <a class="btn btn-outline-light" asp-controller="Account" asp-action="Login">Prijavi se</a>
             }
         </div>
+        <div class="hero-highlights">
+            <span>Online rezervacije</span>
+            <span>QR potvrda</span>
+            <span>Dostava obroka</span>
+        </div>
+    </div>
+</section>
+
+<section class="home-section">
+    <div class="section-heading">
+        <p class="eyebrow">Kako se koristi</p>
+        <h2>Od izbora obroka do preuzimanja u nekoliko koraka</h2>
+    </div>
+    <div class="steps-grid">
+        <article>
+            <span>1</span>
+            <h3>Pregled menija</h3>
+            <p>Student prvo otvara meni i bira obrok koji je trenutno dostupan u ponudi.</p>
+        </article>
+        <article>
+            <span>2</span>
+            <h3>Rezervacija</h3>
+            <p>Odabire termin i nacin preuzimanja, a sistem generise QR kod za narudzbu.</p>
+        </article>
+        <article>
+            <span>3</span>
+            <h3>QR evidencija</h3>
+            <p>Radnik ili kurir skenira kod, a status narudzbe se automatski azurira.</p>
+        </article>
+    </div>
+</section>
+
+<section class="home-section benefits-band">
+    <div>
+        <p class="eyebrow">Prednosti</p>
+        <h2>Zasto koristiti CampusEats?</h2>
+    </div>
+    <div class="benefits-list">
+        <span>Obrok se moze rezervisati unaprijed, pa je odlazak u menzu brzi i jednostavniji.</span>
+        <span>Student odmah zna sta je dostupno i ne mora cekati u redu da sazna ponudu.</span>
+        <span>QR potvrda smanjuje zabune oko preuzimanja i olaksava dokaz da je narudzba zavrsena.</span>
+        <span>Dostava pomaze studentima koji ne mogu licno doci po obrok u dogovorenom terminu.</span>
     </div>
 </section>
 
 <section class="feature-grid">
-    <a class="feature-card" asp-controller="Obroci" asp-action="Index">
+    <a class="feature-card" asp-controller="Meniji" asp-action="Index">
         <span>01</span>
-        <h2>Obroci i zalihe</h2>
-        <p>Pregled dostupnih jela, cijena, sastojaka i raspolozivih kolicina.</p>
+        <h2>Meni</h2>
+        <p>Pregled obroka koji su trenutno u ponudi studentske menze.</p>
     </a>
+    @if (User.IsInRole("Administrator") || User.IsInRole("RadnikMenze"))
+    {
+        <a class="feature-card" asp-controller="Obroci" asp-action="Index">
+            <span>02</span>
+            <h2>Obroci i zalihe</h2>
+            <p>Pregled dostupnih jela, cijena, sastojaka i raspolozivih kolicina.</p>
+        </a>
+    }
     @if (SignInManager.IsSignedIn(User) && !User.IsInRole("Kurir"))
     {
         <a class="feature-card" asp-controller="Rezervacije" asp-action="Index">
-            <span>02</span>
+            <span>03</span>
             <h2>Rezervacije</h2>
             <p>Historija rezervacija sa statusom, terminom i generisanim QR kodom.</p>
         </a>
@@ -38,7 +88,7 @@
     @if (User.IsInRole("Kurir") || User.IsInRole("Administrator"))
     {
         <a class="feature-card" asp-controller="Kurir" asp-action="Index">
-            <span>03</span>
+            <span>04</span>
             <h2>Dostava</h2>
             <p>Lista narudzbi koje su oznacene za dostavu i spremne za kurira.</p>
         </a>
@@ -46,7 +96,7 @@
     @if (User.IsInRole("Administrator"))
     {
         <a class="feature-card" asp-controller="Administracija" asp-action="Index">
-            <span>04</span>
+            <span>05</span>
             <h2>Administracija</h2>
             <p>Brzi pregled korisnika, obroka, rezervacija i aktivne ponude.</p>
         </a>

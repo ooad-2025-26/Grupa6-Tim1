@@ -63,6 +63,11 @@ public class QRCodeService : IQRCodeService
                 return (false, "Prvo preuzmite ovu dostavu na stranici Kurir.", qrKod.Rezervacija);
             }
 
+            if (qrKod.Rezervacija.Status != StatusRezervacije.Spremna)
+            {
+                return (false, "Narudzba mora biti spremna prije nego sto je kurir preuzme skeniranjem QR koda radnika.", qrKod.Rezervacija);
+            }
+
             qrKod.Rezervacija.Status = StatusRezervacije.Preuzeta;
             qrKod.Validan = false;
             await _qrCodeRepository.SaveChangesAsync();

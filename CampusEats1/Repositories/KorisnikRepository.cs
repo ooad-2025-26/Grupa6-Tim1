@@ -29,6 +29,12 @@ public class KorisnikRepository : IKorisnikRepository
             .ToListAsync();
     }
 
+    public Task<bool> HasReservationsOrDeliveriesAsync(int korisnikId)
+    {
+        return _context.Rezervacije
+            .AnyAsync(rezervacija => rezervacija.KorisnikId == korisnikId || rezervacija.KurirId == korisnikId);
+    }
+
     public Task<int> CountAsync()
     {
         return _context.Korisnici.CountAsync();

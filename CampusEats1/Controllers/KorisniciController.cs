@@ -63,4 +63,40 @@ public class KorisniciController : Controller
         TempData["Poruka"] = $"Uloga za korisnika {korisnik.Email} je promijenjena u {uloga}.";
         return RedirectToAction(nameof(Index));
     }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Obrisi(int id)
+    {
+        var korisnik = await _userManager.FindByIdAsync(id.ToString());
+        if (korisnik is null)
+        {
+            return NotFound();
+        }
+
+        if (korisnik.Email == User.Identity?.Name)
+        {
+            TempData["Greska"] = "Ne mozete obrisati vlastiti administratorski nalog.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        if (await _korisnikService.HasReservationsOrDeliveriesAsync(id))
+        {
+            TempData["Greska"] = $"Korisnik {korisnik.Email} ima rezervacije ili dostave, pa ga nije moguce obrisati bez narusavanja historije.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        var currentRoles = await _userManager.GetRolesAsync(korisnik);
+        if (currentRoles.Count > 0)
+        {
+            await _userManager.RemoveFromRolesAsync(korisnik, currentRoles);
+        }
+
+        var result = await _userManager.DeleteAsync(korisnik);
+        TempData[result.Succeeded ? "Poruka" : "Greska"] = result.Succeeded
+            ? $"Korisnik {korisnik.Email} je obrisan."
+            : string.Join(" ", result.Errors.Select(error => error.Description));
+
+        return RedirectToAction(nameof(Index));
+    }
 }

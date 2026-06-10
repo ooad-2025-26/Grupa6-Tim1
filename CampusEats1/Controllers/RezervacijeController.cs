@@ -12,6 +12,7 @@ namespace CampusEats.Controllers;
 public class RezervacijeController : Controller
 {
     private readonly IKorisnikService _korisnikService;
+    private readonly IMeniService _meniService;
     private readonly IObrokService _obrokService;
     private readonly IRezervacijaService _rezervacijaService;
     private readonly UserManager<Korisnik> _userManager;
@@ -19,11 +20,13 @@ public class RezervacijeController : Controller
     public RezervacijeController(
         IRezervacijaService rezervacijaService,
         IObrokService obrokService,
+        IMeniService meniService,
         IKorisnikService korisnikService,
         UserManager<Korisnik> userManager)
     {
         _rezervacijaService = rezervacijaService;
         _obrokService = obrokService;
+        _meniService = meniService;
         _korisnikService = korisnikService;
         _userManager = userManager;
     }
@@ -176,6 +179,6 @@ public class RezervacijeController : Controller
     private async Task PopuniListeAsync(int? korisnikId = null, int? obrokId = null)
     {
         ViewBag.KorisnikId = new SelectList(await _korisnikService.GetStudentsAsync(), "Id", "Email", korisnikId);
-        ViewBag.ObrokId = new SelectList(await _obrokService.GetAvailableAsync(), "Id", "Naziv", obrokId);
+        ViewBag.ObrokId = new SelectList(await _meniService.GetAvailableMenuObrociAsync(), "Id", "Naziv", obrokId);
     }
 }

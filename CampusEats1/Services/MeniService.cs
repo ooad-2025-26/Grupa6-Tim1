@@ -19,6 +19,16 @@ public class MeniService : IMeniService
         return _meniRepository.GetAllAsync();
     }
 
+    public Task<List<Meni>> GetVisibleAsync()
+    {
+        return _meniRepository.GetVisibleAsync();
+    }
+
+    public Task<List<Obrok>> GetAvailableMenuObrociAsync()
+    {
+        return _meniRepository.GetAvailableMenuObrociAsync();
+    }
+
     public Task<Meni?> GetByIdAsync(int? id)
     {
         return id is null ? Task.FromResult<Meni?>(null) : _meniRepository.GetByIdAsync(id.Value);

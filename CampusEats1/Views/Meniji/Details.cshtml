@@ -15,8 +15,15 @@
         <dd>@Model.Obrok?.Naziv</dd>
         <dt>Cijena</dt>
         <dd>@Model.Obrok?.Cijena.ToString("0.00") KM</dd>
-        <dt>Dostupnost</dt>
-        <dd>@(Model.Obrok?.Dostupan == true ? "Dostupno" : "Nedostupno")</dd>
+        <dt>Opis</dt>
+        <dd>@Model.Obrok?.Opis</dd>
+        <dt>Sastojci</dt>
+        <dd>@Model.Obrok?.Sastojci</dd>
+        @if (User.IsInRole("Administrator") || User.IsInRole("RadnikMenze"))
+        {
+            <dt>Dostupnost</dt>
+            <dd>@(Model.Obrok?.Dostupan == true && Model.Obrok.Kolicina > 0 ? "Dostupno" : "Nedostupno")</dd>
+        }
     </dl>
     <a class="btn btn-outline-secondary" asp-action="Index">Nazad</a>
 </section>

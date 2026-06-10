@@ -3,6 +3,9 @@
 @{
     ViewData["Title"] = "Detalji rezervacije";
     var qrKod = Model.QRKod?.Kod;
+    var qrOpis = Model.NacinPreuzimanja == NacinPreuzimanja.Dostava
+        ? "QR kod koji radnik pokazuje kuriru za preuzimanje dostave."
+        : "QR kod za preuzimanje obroka u menzi.";
     var qrImageUrl = string.IsNullOrWhiteSpace(qrKod)
         ? null
         : $"https://api.qrserver.com/v1/create-qr-code/?size=220x220&data={Uri.EscapeDataString(qrKod)}";
@@ -33,6 +36,7 @@
             {
                 <div class="qr-display">
                     <img src="@qrImageUrl" alt="QR kod za rezervaciju #@Model.Id" />
+                    <span class="muted">@qrOpis</span>
                     <code>@qrKod</code>
                 </div>
             }

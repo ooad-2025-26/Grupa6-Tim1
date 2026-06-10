@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CampusEats.Controllers;
 
+[Authorize(Roles = "Administrator,RadnikMenze")]
 public class ObrociController : Controller
 {
     private readonly IObrokService _obrokService;
@@ -26,14 +27,12 @@ public class ObrociController : Controller
         return obrok is null ? NotFound() : View(obrok);
     }
 
-    [Authorize(Roles = "Administrator,RadnikMenze")]
     public IActionResult Create()
     {
         return View(new Obrok());
     }
 
     [HttpPost]
-    [Authorize(Roles = "Administrator,RadnikMenze")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create([Bind("Naziv,Cijena,Opis,Sastojci,Dostupan,Kolicina")] Obrok obrok)
     {
@@ -46,7 +45,6 @@ public class ObrociController : Controller
         return RedirectToAction(nameof(Index));
     }
 
-    [Authorize(Roles = "Administrator,RadnikMenze")]
     public async Task<IActionResult> Edit(int? id)
     {
         var obrok = await _obrokService.GetByIdAsync(id);
@@ -54,7 +52,6 @@ public class ObrociController : Controller
     }
 
     [HttpPost]
-    [Authorize(Roles = "Administrator,RadnikMenze")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(int id, [Bind("Id,Naziv,Cijena,Opis,Sastojci,Dostupan,Kolicina")] Obrok obrok)
     {
@@ -85,7 +82,6 @@ public class ObrociController : Controller
         return RedirectToAction(nameof(Index));
     }
 
-    [Authorize(Roles = "Administrator,RadnikMenze")]
     public async Task<IActionResult> Delete(int? id)
     {
         var obrok = await _obrokService.DeletePreviewAsync(id);
@@ -93,7 +89,6 @@ public class ObrociController : Controller
     }
 
     [HttpPost, ActionName("Delete")]
-    [Authorize(Roles = "Administrator,RadnikMenze")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(int id)
     {

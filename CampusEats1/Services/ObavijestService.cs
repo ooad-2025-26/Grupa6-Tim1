@@ -27,6 +27,28 @@ public class ObavijestService : IObavijestService
         await _context.SaveChangesAsync();
     }
 
+    public async Task KreirajZaUloguAsync(UlogaKorisnika uloga, int? rezervacijaId, string naslov, string poruka)
+    {
+        var korisnikIds = await _context.Korisnici
+            .Where(korisnik => korisnik.Uloga == uloga)
+            .Select(korisnik => korisnik.Id)
+            .ToListAsync();
+
+        foreach (var korisnikId in korisnikIds)
+        {
+            _context.Obavijesti.Add(new Obavijest
+            {
+                KorisnikId = korisnikId,
+                RezervacijaId = rezervacijaId,
+                Naslov = naslov,
+                Poruka = poruka,
+                DatumSlanja = DateTime.Now
+            });
+        }
+
+        await _context.SaveChangesAsync();
+    }
+
     public Task<List<Obavijest>> GetForUserAsync(int korisnikId)
     {
         return _context.Obavijesti

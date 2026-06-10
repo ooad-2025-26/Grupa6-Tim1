@@ -1,6 +1,12 @@
 @{
     ViewData["Title"] = "QR evidencija";
     var rezervacija = ViewBag.Rezervacija as Rezervacija;
+    var kurirskiKod = rezervacija?.QRKod is null
+        ? null
+        : $"KURIR:{rezervacija.Id}:{rezervacija.QRKod.Kod}";
+    var kurirskiQrUrl = string.IsNullOrWhiteSpace(kurirskiKod)
+        ? null
+        : $"https://api.qrserver.com/v1/create-qr-code/?size=180x180&data={Uri.EscapeDataString(kurirskiKod)}";
 }
 
 <div class="page-heading">
@@ -14,7 +20,7 @@
 }
 
 <section class="scan-layout">
-    <form asp-action="Scan" class="app-form">
+    <form asp-action="Scan" class="app-form" id="qrScanForm">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
         <label for="kod">QR kod</label>
@@ -37,16 +43,38 @@
 @if (rezervacija is not null)
 {
     <section class="details-panel mt-3">
+        <div class="status-result">
+            <span class="status-label">Status narudzbe</span>
+            <strong>@rezervacija.Status</strong>
+        </div>
         <dl>
+            <dt>Broj narudzbe</dt>
+            <dd>#@rezervacija.Id</dd>
             <dt>Student</dt>
             <dd>@rezervacija.Korisnik?.Ime @rezervacija.Korisnik?.Prezime</dd>
             <dt>Obrok</dt>
             <dd>@rezervacija.Obrok?.Naziv</dd>
+            <dt>Termin preuzimanja</dt>
+            <dd>@rezervacija.TerminPreuzimanja.ToString(@"hh\:mm")</dd>
             <dt>Nacin preuzimanja</dt>
             <dd>@rezervacija.NacinPreuzimanja</dd>
-            <dt>Status</dt>
-            <dd>@rezervacija.Status</dd>
+            @if (rezervacija.Kurir is not null)
+            {
+                <dt>Kurir</dt>
+                <dd>@rezervacija.Kurir.Ime @rezervacija.Kurir.Prezime</dd>
+            }
         </dl>
+        @if ((User.IsInRole("Kurir") || User.IsInRole("Administrator"))
+            && rezervacija.NacinPreuzimanja == NacinPreuzimanja.Dostava
+            && rezervacija.Status == StatusRezervacije.Preuzeta
+            && kurirskiQrUrl is not null)
+        {
+            <div class="qr-display mt-3">
+                <strong>QR kod za studenta</strong>
+                <img src="@kurirskiQrUrl" alt="Kurirski QR kod za rezervaciju #@rezervacija.Id" />
+                <span class="muted">Student skenira ovaj QR kod kada mu se narudzba dostavi.</span>
+            </div>
+        }
     </section>
 }
 
@@ -55,6 +83,7 @@
     <script>
         const readerElementId = "qrReader";
         const kodInput = document.getElementById("kod");
+        const qrScanForm = document.getElementById("qrScanForm");
         const startButton = document.getElementById("startScan");
         const stopButton = document.getElementById("stopScan");
         const statusText = document.getElementById("cameraStatus");
@@ -100,8 +129,9 @@
                 },
                 async value => {
                     kodInput.value = value;
-                    setStatus("QR kod je ocitan. Kliknite Evidentiraj za potvrdu.");
+                    setStatus("QR kod je ocitan. Evidencija se obradjuje...");
                     await stopScanner();
+                    qrScanForm?.submit();
                 },
                 () => { }
             );
