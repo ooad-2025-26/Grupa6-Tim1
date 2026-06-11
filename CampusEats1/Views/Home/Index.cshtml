@@ -28,25 +28,58 @@
 
 <section class="home-section">
     <div class="section-heading">
-        <p class="eyebrow">Kako se koristi</p>
-        <h2>Od izbora obroka do preuzimanja u nekoliko koraka</h2>
+        <p class="eyebrow">Jednostavno i brzo</p>
+        <h2>Kako funkcionise sistem?</h2>
+        <p>Rezervacija i preuzimanje obroka zavrsavaju se u nekoliko jednostavnih koraka.</p>
     </div>
     <div class="steps-grid">
         <article>
-            <span>1</span>
-            <h3>Pregled menija</h3>
-            <p>Student prvo otvara meni i bira obrok koji je trenutno dostupan u ponudi.</p>
+            <div class="step-icon"><i data-lucide="utensils"></i></div>
+            <span>Korak 1</span>
+            <h3>Odaberite obrok</h3>
+            <p>Pregledajte trenutni meni i odaberite obrok koji vam najvise odgovara.</p>
         </article>
         <article>
-            <span>2</span>
-            <h3>Rezervacija</h3>
-            <p>Odabire termin i nacin preuzimanja, a sistem generise QR kod za narudzbu.</p>
+            <div class="step-icon"><i data-lucide="calendar-check"></i></div>
+            <span>Korak 2</span>
+            <h3>Izaberite termin</h3>
+            <p>Rezervisite obrok, odaberite vrijeme i nacin na koji ga zelite preuzeti.</p>
         </article>
         <article>
-            <span>3</span>
-            <h3>QR evidencija</h3>
-            <p>Radnik ili kurir skenira kod, a status narudzbe se automatski azurira.</p>
+            <div class="step-icon"><i data-lucide="qr-code"></i></div>
+            <span>Korak 3</span>
+            <h3>Preuzmite QR kod</h3>
+            <p>Nakon rezervacije dobijate QR kod koji sluzi kao potvrda vase narudzbe.</p>
         </article>
+        <article>
+            <div class="step-icon"><i data-lucide="package-check"></i></div>
+            <span>Korak 4</span>
+            <h3>Preuzmite obrok</h3>
+            <p>Pokazite QR kod radniku ili zavrsite dostavu uz brzu potvrdu preuzimanja.</p>
+        </article>
+    </div>
+</section>
+
+<section class="home-section about-band">
+    <div class="about-copy">
+        <p class="eyebrow">O nama</p>
+        <h2>Studentska ishrana bez nepotrebnog cekanja</h2>
+        <p>CampusEats je nastao kao digitalno rjesenje za jednostavnije koristenje studentske menze. Na jednom mjestu povezujemo pregled ponude, rezervaciju, licno preuzimanje i dostavu obroka.</p>
+        <p>Cilj sistema je studentima ustedjeti vrijeme, olaksati planiranje obroka i uciniti cijeli proces preglednijim od rezervacije do zavrsene narudzbe.</p>
+    </div>
+    <div class="about-points">
+        <div>
+            <i data-lucide="clock-3"></i>
+            <span><strong>Vise vremena za studente</strong>Rezervisite unaprijed i izbjegnite nepotrebno cekanje.</span>
+        </div>
+        <div>
+            <i data-lucide="badge-check"></i>
+            <span><strong>Sigurno preuzimanje</strong>QR potvrda jasno povezuje studenta i njegovu narudzbu.</span>
+        </div>
+        <div>
+            <i data-lucide="heart-handshake"></i>
+            <span><strong>Pristupacnija menza</strong>Licno preuzimanje i dostava prilagodjeni su potrebama studenata.</span>
+        </div>
     </div>
 </section>
 
@@ -102,3 +135,8 @@
         </a>
     }
 </section>
+
+@section Scripts {
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script>window.lucide?.createIcons();</script>
+}

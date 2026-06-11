@@ -107,6 +107,11 @@ body {
   max-width: 760px;
 }
 
+.section-heading > p:last-child {
+  color: #66756d;
+  margin: 10px 0 0;
+}
+
 .section-heading h2,
 .benefits-band h2 {
   font-size: 1.65rem;
@@ -117,7 +122,7 @@ body {
 .steps-grid {
   display: grid;
   gap: 18px;
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   margin-top: 18px;
 }
 
@@ -125,25 +130,98 @@ body {
   background: #ffffff;
   border: 1px solid #dde5dc;
   border-radius: 8px;
+  box-shadow: 0 12px 28px rgba(35, 57, 47, 0.07);
   padding: 24px;
 }
 
-.steps-grid span {
-  align-items: center;
-  background: #1f7a4d;
-  border-radius: 999px;
-  color: #ffffff;
-  display: inline-flex;
+.steps-grid > article > span {
+  color: #1f7a4d;
+  display: block;
+  font-size: 0.76rem;
   font-weight: 800;
-  height: 34px;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.step-icon {
+  align-items: center;
+  background: #dcf8e7;
+  border-radius: 8px;
+  color: #17623d;
+  display: inline-flex;
+  height: 46px;
   justify-content: center;
-  margin-bottom: 14px;
-  width: 34px;
+  margin-bottom: 18px;
+  width: 46px;
+}
+
+.step-icon svg {
+  height: 23px;
+  width: 23px;
 }
 
 .steps-grid h3 {
   font-size: 1.1rem;
   font-weight: 800;
+}
+
+.steps-grid p {
+  color: #66756d;
+  margin-bottom: 0;
+}
+
+.about-band {
+  align-items: center;
+  background: #eaf7ef;
+  border: 1px solid #cee7d7;
+  border-radius: 8px;
+  display: grid;
+  gap: 42px;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.9fr);
+  padding: 36px;
+}
+
+.about-copy h2 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin-bottom: 16px;
+}
+
+.about-copy p:not(.eyebrow) {
+  color: #52635a;
+  line-height: 1.7;
+}
+
+.about-points {
+  display: grid;
+  gap: 12px;
+}
+
+.about-points > div {
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #dbe9df;
+  border-radius: 8px;
+  display: grid;
+  gap: 14px;
+  grid-template-columns: 38px 1fr;
+  padding: 15px;
+}
+
+.about-points svg {
+  color: #1f7a4d;
+  height: 24px;
+  width: 24px;
+}
+
+.about-points span {
+  color: #66756d;
+}
+
+.about-points strong {
+  color: #1e2a24;
+  display: block;
+  margin-bottom: 2px;
 }
 
 .benefits-band {
@@ -420,8 +498,20 @@ body {
 
   .scan-layout,
   .details-panel dl,
-  .benefits-band {
+  .benefits-band,
+  .about-band,
+  .steps-grid {
     grid-template-columns: 1fr;
+  }
+
+  .about-band {
+    padding: 24px 20px;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 991px) {
+  .steps-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
